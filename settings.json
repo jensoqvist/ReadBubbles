@@ -1,0 +1,57 @@
+
+
+{
+	"PosTypes":{
+		"Distance": "00\\d{2}",
+		"Diameter": "01\\d{2}",
+		"Gear Parameter": "02\\d{2}",
+		"Angle": "03\\d{2}",
+		"Radius": "04\\d{2}",
+		"Chamfer": "05\\d{2}",
+		"GPS (Plane)": "10\\d{2}",
+		"GPS (Diameter)": "11\\d{2}",
+		"GPS (Gear)": "12\\d{2}",
+		"GPS (Angle)": "13\\d{2}",
+		"GPS (Radius)": "14\\d{2}",
+		"GPS (Chamfer)": "15\\d{2}",
+		"GPS (Other)": "17\\d{2}",
+		"Surface Roughness": "2\\d{3}"
+	},
+    "Columns":{
+        "Gear ID": null,
+        "View": null,
+        "Audited": null,
+        "CMS": null,
+        "Measurement Instrument": null,
+        "Comment": null
+    },
+    "Data Validation":{
+        "Audited":[
+            "Yes",
+            "No"
+        ],
+        "Measurement Instrument":[
+            "CMM",
+            "GMM",
+            "Surface",
+            "Formtester",
+            "Contracer",
+            "Manual",
+            "Visual Control",
+            "N/A"
+        ],
+        "CMS":[
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+            ]
+
+    }
+}
