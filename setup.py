@@ -6,7 +6,7 @@ includes = []
 excludes = []
 packages = []
 
-setup(name = 'Indata',
+setup(name = 'BubblesToXLSX',
             version = '1.0',
             description = 'Bubbles to Excel',
             options = {'build_exe': {'includes': includes, 'excludes': excludes, 'packages': packages, 'include_files': include_files}},

@@ -2,6 +2,21 @@ import pandas as pd
 from pos_number import PositionNumber
 
 class DataFrameHandler():
+    """
+    Class that creates a pandas dataframe over PositionNumbers found on a Bubble drawing.\n
+    Checks if there is an old .xlsx and if so extracts the latest dataframe from it.\n\n
+
+    If an old data frame is found, compares the position numbers in the newly created dataframe and the old.\n
+    Keeps any old information added to the old dataframe.\n\n
+
+    Attributes:\n
+        self.col_names = Column names in the dataframe, determend by the keys defined in PositionNumber() \n
+        self.df_old = The old dataframe if found \n
+        self.position_numbers = Position Numbers found on bubble drawing\n
+        self.xl = xl_handler, Handling of .xlsx file\n
+        self.new = List of new position numbers\n
+        self.removed = List of removed position numbers
+    """
     def __init__(self, df_old= None, position_nums = None, xl_handler= None) -> None:
         self.col_names = PositionNumber().list_keys()
         self.df_old = df_old
@@ -16,20 +31,32 @@ class DataFrameHandler():
             self._compare()
         
     def create_new_data_frame(self):
+        """
+        Creation of new dataframe with columns defined in self.col_names
+        """
         return pd.DataFrame(columns= self.col_names)
 
     def read_xl(self, *args, **kwargs):
         return pd.read_excel(*args, **kwargs)
 
     def to_xl(self):
+        """
+        Appends dataframe to .xlsx file in self.xl
+        """
         with pd.ExcelWriter(self.xl.filename, engine= 'openpyxl', mode= 'a', if_sheet_exists= 'replace') as writer:
             self.df.to_excel(writer, index=False, startrow= self.xl.skip_rows, startcol= self.xl.start_col, sheet_name= self.xl.sheet_name)
 
     def _fill_df(self):
+        """
+        Fills the dataframe self.df with self.position_numbers
+        """
         if self.position_numbers is not None:
             self.df = pd.DataFrame(self.position_numbers, columns= self.col_names)
 
     def _compare_df(self):
+        """
+        Compares the entire Dataframe to an old Dataframe
+        """
         old_columns = self.df_old.columns
         for column in self.df.columns:
             if column not in old_columns:
@@ -39,6 +66,10 @@ class DataFrameHandler():
                 self.df_old.drop(columns= [column], inplace= True)
 
     def _compare(self):
+        """
+        Compare Position Numbers to old Position Numbers.\n
+        Keeps information that might have been added in the old dataframe.
+        """
         new = []
         removed = []
         for row in self.df["Position Number"].values:

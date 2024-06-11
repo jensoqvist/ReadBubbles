@@ -4,6 +4,26 @@ from dataframe_handler import DataFrameHandler
 
 
 class XlHandler():
+    """
+    Class handling the .xlsx files created for the position numbers.\n\n
+
+    Parameters:\n
+        pdf_extractor: (PdfExtractor)\n
+        pos_num_lenght: lenght of list of position numbers\n
+        path: path to the .xlsx file\n
+
+    Attributes:\n
+        self.partnum = Part number from pdf_extractor\n
+        self.revnum = Revision number from pdf_extractor\n
+        self.sheet_name = f"{self.partnum}_{self.revnum}"\n
+        self.path = path\n
+        self.filename = join(path, f"{self.partnum} Posnr.xlsx")\n
+        self.pos_num_lenght = pos_num_lenght\n
+        self.skip_rows = 5 number of rows to skip to where to look for dataframe\n 
+        self.header_index = 0\n
+        self.start_col = 1\n
+        self.df_old = None\n
+    """
     def __init__(self, pdf_extractor, pos_num_lenght, path) -> None:
         self.partnum = pdf_extractor.partnum
         self.revnum = pdf_extractor.revnum

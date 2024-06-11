@@ -1,3 +1,8 @@
+"""
+App that reads bubbles drawing .pdfs and creates standardised .xlsx files over positions found.
+"""
+
+
 from file_handler import FileHandler
 from pdf_extract import PdfExctractor
 from pos_numbers import PositionNumbers

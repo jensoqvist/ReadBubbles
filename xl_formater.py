@@ -6,6 +6,31 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from settings import Settings
 
 class XlFormater():
+    """
+    Class to give .xlsx file the correct format after the dataframe has been added to it.\n\n
+
+    Parameters:\n
+        xlhandler\n 
+        df_handler\n
+        duplicates\n\n
+
+    Attributes:\n
+        self.settings = Settings()\n
+        self.xl = xlhandler\n
+        self.df_handler = df_handler\n
+        self.df = df_handler.df\n
+        self.duplicates = duplicates\n
+        self.wbook = openpyxl.load_workbook(self.xl.filename)\n
+        self.sheet = self.wbook[self.xl.sheet_name]\n\n
+    Table settings:\n
+        self.table_start_col_index = 1 + self.xl.start_col\n
+        self.table_start_row_index = self.xl.skip_rows + 1\n
+        self.table_start = f"{openpyxl.utils.get_column_letter(self.table_start_col_index)}{self.table_start_row_index}"\n
+        self.table_end_col_index = self.df.shape[1] + self.xl.start_col\n
+        self.table_end_row_index = len(self.df) + self.xl.skip_rows + 1\n
+        self.table_end = f"{openpyxl.utils.get_column_letter(self.table_end_col_index)}{self.table_end_row_index}"\n
+    
+    """
     def __init__(self, xlhandler, df_handler, duplicates) -> None:
         self.settings = Settings()
         self.xl = xlhandler

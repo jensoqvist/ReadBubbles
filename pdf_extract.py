@@ -15,13 +15,13 @@ class PdfExctractor():
     Class that handles the exctraction and cleaning of the text from the position number drawing PDF\n\n
 
      Attributes:\n
-     partnum = The Partnumber extracted from the position number drawing\n
-     revnum = The Revision number extracted from the position number drawing\n
-     pos_numbers_clean = A clean list of the position numbers on the position number drawing\n
-     duplicates = Any duplicate position number found\n
-     _pdf = the pdf file to exctract position numbers from\n
-     _text = extracted text\n
-     _pos_numbers = An list of the position numbers on the position number drawing before cleaning\n\n
+        partnum = The Partnumber extracted from the position number drawing\n
+        revnum = The Revision number extracted from the position number drawing\n
+        pos_numbers_clean = A clean list of the position numbers on the position number drawing\n
+        duplicates = Any duplicate position number found\n
+        _pdf = the pdf file to exctract position numbers from\n
+        _text = extracted text\n
+        _pos_numbers = An list of the position numbers on the position number drawing before cleaning\n\n
 
     '''
     def __init__(self, filehandler) -> None:
