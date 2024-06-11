@@ -15,9 +15,9 @@ class XlHandler():
     Attributes:\n
         self.partnum = Part number from pdf_extractor\n
         self.revnum = Revision number from pdf_extractor\n
-        self.sheet_name = f"{self.partnum}_{self.revnum}"\n
-        self.path = path\n
-        self.filename = join(path, f"{self.partnum} Posnr.xlsx")\n
+        self.sheet_name = Name of sheet to create in .xlsx"\n
+        self.path = Path to .xlsx\n
+        self.filename = Filename of .xlsx")\n
         self.pos_num_lenght = pos_num_lenght\n
         self.skip_rows = 5 number of rows to skip to where to look for dataframe\n 
         self.header_index = 0\n
