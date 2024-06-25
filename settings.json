@@ -14,21 +14,41 @@
 		"GPS (Angle)": "13\\d{2}",
 		"GPS (Radius)": "14\\d{2}",
 		"GPS (Chamfer)": "15\\d{2}",
-		"GPS (Other)": "17\\d{2}",
+		"GPS (Complex)": "17\\d{2}",
 		"Surface Roughness": "2\\d{3}"
 	},
     "Columns":{
-        "Gear ID": null,
-        "View": null,
+        "GPS Specification": null,    
+        "Gear ID": null,  
         "Audited": null,
         "CMS": null,
         "Measurement Instrument": null,
-        "Comment": null
+        "Comment": null,
+        "MSA1": null,
+        "MSA3": null
     },
     "Data Validation":{
+        "GPS Specification":[
+            "Position",
+            "Symmetry",
+            "Perpendicularity",
+            "Paralellism",
+            "Flatness",
+            "Coaxiality",
+            "Concentricity",
+            "Cylindricity",
+            "Roundness",
+            "Surface Profile",
+            "Line Profile",
+            "Angularity",
+            "Straightness",
+            "Runout",
+            "Total Runout"
+        ],
         "Audited":[
             "Yes",
-            "No"
+            "No",
+            "Other (See comment)"
         ],
         "Measurement Instrument":[
             "CMM",
@@ -51,7 +71,32 @@
             "8",
             "9",
             "10"
-            ]
+        ],
+        "MSA1":[
+            "OK",
+            "NOK"
+        ],
+        "MSA3":[
+            "OK",
+            "NOK"
+        ]
+    },
+    "Conditional":{
+            "MSA1":{
+                "Red": "NOK",
+                "Green": "OK",
+                "Blue": null
+            },
+            "MSA3":{
+                "Red": "NOK",
+                "Green": "OK",
+                "Blue": null
+            },
+            "Audited":{
+                "Red": "No",
+                "Green": "Yes",
+                "Blue": "Other"
+            }
 
-    }
+}
 }

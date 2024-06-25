@@ -48,7 +48,7 @@ class XlHandler():
 
     def get_old_dataframe(self):
         if self.check_file_exist():
-            for i in range(1, int(self.revnum)):
+            for i in range(0, int(self.revnum)):
                 self.partnum + "_" + str(int(self.revnum) - i)
                 try:
                     self.df_old = DataFrameHandler().read_xl(self.filename, header= self.header_index, skiprows= self.skip_rows, dtype= str, sheet_name= self.partnum + "_" + str(int(self.revnum) - i))

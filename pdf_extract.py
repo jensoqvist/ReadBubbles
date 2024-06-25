@@ -123,7 +123,7 @@ class PdfExctractor():
                 clean_numbers += pos.split("/")
             elif re.search('\d{4}.\d\/\d{4}.\d\/\d{4}.\d', pos): #EX 1101.1/1102.1/1103.1
                 clean_numbers += pos.split("/")
-            elif re.search('\d{4}.\d[-|\/]\d[^\d]', pos):     #EX 1101.1-3 (1101.1, 1101.2, 1101.3)  
+            elif re.search('\d{4}.\d[-|\/]\d', pos):     #EX 1101.1-3 (1101.1, 1101.2, 1101.3)  
                 match = re.search('\d{4}.', pos).group(0)
                 for i in range(int(pos[-3]), int(pos[-1]) + 1):
                     clean_numbers.append(match + str(i))

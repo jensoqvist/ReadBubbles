@@ -47,15 +47,41 @@ class XlFormater():
         self.sheet = self.wbook[self.xl.sheet_name]
 
         self._add_table()
+        self._conditional_formating()
         self._add_headings()
         self._add_lists()
         self._adjust_sizes()
         self._alignment()
         self._add_borders()
-        self._data_validation()       
+        self._data_validation()  
         self._hide_sheets()
         self.wbook.active = self.sheet
         self._save()
+         
+
+    def _conditional_formating(self):
+        for colname, words in self.settings.data["Conditional"].items():
+            self._conditional_col_red_green_blue(colname, words)
+
+    def _conditional_col_red_green_blue(self, colname, words):
+        from openpyxl.styles import Font, PatternFill, Border
+        rownum = self.table_start_row_index  - 1
+        for col in self.sheet.iter_cols(self.table_start_col_index, self.sheet.max_column):
+            col_letter = openpyxl.utils.get_column_letter(col[rownum].column)
+            if col[rownum].value == colname:
+                self._set_condition(col_letter, Font(color= "950A16"), PatternFill( bgColor= "F8B6B7", fill_type='solid'), words["Red"])
+                self._set_condition(col_letter, Font(color= "004600"), PatternFill( bgColor= "C6EFCE", fill_type='solid'), words["Green"])
+                if words["Blue"]:
+                    self._set_condition(col_letter, Font(color= "041E42"), PatternFill( bgColor= "87AFE8", fill_type='solid'), words["Blue"])
+        
+    def _set_condition(self, col, text, fill, word):
+        from openpyxl.formatting import Rule
+        from openpyxl.styles.differential import DifferentialStyle
+        dxf = DifferentialStyle(font= text, fill=fill)
+        rule = Rule(type="containsText", operator="containsText", text= word, dxf=dxf)
+        rule.formula = [f'NOT(ISERROR(SEARCH("{word}",{col}{self.table_start_row_index})))']
+        self.sheet.conditional_formatting.add(f'{col}{self.table_start_row_index}:{col}{self.table_end_row_index}', rule)
+
 
     def _add_table(self):
         self.table = Table(displayName=f"Positions_REV_{self.xl.revnum}", ref=f'{self.table_start}:{self.table_end}')
@@ -79,10 +105,10 @@ class XlFormater():
         self.sheet['G4'].value = "REMOVED POSITION NUMBERS:"
         self.sheet['H4'].value = str(self.df_handler.removed)
 
-    def _adjust_sizes(self):
-        MAX_LEN = 8
-        LENGHT_LIMIT = 50
+    def _adjust_sizes(self):   
+        LENGHT_LIMIT = 40
         for col in self.sheet.columns: 
+            MAX_LEN = 8
             column = col[0].column_letter
             for cell in col:
                 try:
@@ -97,7 +123,6 @@ class XlFormater():
             self.sheet.column_dimensions[column].width = adjusted_width
 
     def _alignment(self):
-        #Align Position Number, Col 1
         for r in range(self.table_start_row_index + 1, self.sheet.max_row + 1):
             self.sheet.cell(r, self.table_start_col_index).alignment = Alignment(horizontal='right')
 
