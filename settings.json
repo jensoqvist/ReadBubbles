@@ -21,11 +21,15 @@
         "GPS Specification": null,    
         "Gear ID": null,  
         "Audited": null,
-        "CMS": null,
+        "CMS Audit": null,
+        "CMS Drawing": null,
         "Measurement Instrument": null,
         "Comment": null,
         "MSA1": null,
-        "MSA3": null
+        "MSA3": null,
+        "Exemption Approved Date": null,
+        "Exemption Valid To": null,
+        "Manually Added": null
     },
     "Data Validation":{
         "GPS Specification":[
@@ -48,7 +52,7 @@
         "Audited":[
             "Yes",
             "No",
-            "Other (See comment)"
+            "Other (comment)"
         ],
         "Measurement Instrument":[
             "CMM",
@@ -60,7 +64,7 @@
             "Visual Control",
             "N/A"
         ],
-        "CMS":[
+        "CMS Audit":[
             "1",
             "2",
             "3",
@@ -72,6 +76,11 @@
             "9",
             "10"
         ],
+        "CMS Drawing":[
+            "C",
+            "M",
+            "L"
+        ],
         "MSA1":[
             "OK",
             "NOK"
@@ -79,24 +88,100 @@
         "MSA3":[
             "OK",
             "NOK"
+        ],
+        "Manually Added":[
+            "Yes",
+            "No"
         ]
     },
-    "Conditional":{
-            "MSA1":{
-                "Red": "NOK",
-                "Green": "OK",
-                "Blue": null
-            },
-            "MSA3":{
-                "Red": "NOK",
-                "Green": "OK",
-                "Blue": null
-            },
-            "Audited":{
-                "Red": "No",
-                "Green": "Yes",
-                "Blue": "Other"
-            }
 
-}
+    "Conditional":{
+        "MSA1":{
+            "NOK": "Red",
+             "OK": "Green"
+        },
+        "MSA3":{
+            "NOK": "Red",
+             "OK": "Green"
+        },
+        "Audited":{
+            "No": "Red",
+            "Yes": "Green",
+            "Other": "Blue"
+        },
+        "Measurement Instrument":{
+            "CMM": "Purple",
+            "GMM": "Olive",
+            "Surface": "Tan",
+            "Formtester": "Aqua",
+            "Contracer": "Orange",
+            "Manual": "Red",
+            "Visual Control": "Red",
+            "N/A": "None"
+        }
+    },
+
+    "Colors":{
+        "Red": {
+            "Font Color": "950A16",
+            "Fill Color": "F8B6B7"
+        },
+        "Green": {
+            "Font Color": "004600",
+            "Fill Color": "C6EFCE"
+        },
+        "Blue": {
+            "Font Color": "041E42",
+            "Fill Color": "87AFE8"
+        },
+        "Tan": {
+            "Font Color": "1D1B10",
+            "Fill Color": "CBC5A5"
+        },
+        "Purple":  {
+            "Font Color": "211929",
+            "Fill Color": "C0B2D2"
+        },
+        "Orange":  {
+            "Font Color": "3C1C02",
+            "Fill Color": "FCD5B4"
+        },
+        "Olive":  {
+            "Font Color": "212911",
+            "Fill Color": "D8E4BC"
+        },
+        "Aqua":  {
+            "Font Color": "0F292F",
+            "Fill Color": "B7DEE8"
+        },
+        "White": {
+            "Font Color": "000000",
+            "Fill Color": "FFFFFF"
+        },
+        "Grey": {
+            "Font Color": "000000",
+            "Fill Color": "D9D9D9"
+        },
+        "None": {
+            "Font Color": "000000",
+            "Fill Color": null
+        }
+    },
+
+    "Column Size":{
+        "Position Number": 16,
+        "Type": 18,
+        "GPS Specification": 16,    
+        "Gear ID": 10,  
+        "Audited": 16,
+        "CMS Audit": 12,
+        "CMS Drawing": 14,
+        "Measurement Instrument": 24,
+        "Comment": 40,
+        "MSA1": 8,
+        "MSA3": 8,
+        "Exemption Approved Date": 24,
+        "Exemption Valid To": 18,
+        "Manually Added": 16
+    }
 }
