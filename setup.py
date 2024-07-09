@@ -1,7 +1,7 @@
 from cx_Freeze import setup, Executable
 
 
-include_files = ["settings.json"]
+include_files = ["settings.json", "scania-symbol.png"]
 includes = []
 excludes = []
 packages = []

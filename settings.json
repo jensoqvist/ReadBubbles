@@ -21,6 +21,9 @@
         "GPS Specification": null,    
         "Gear ID": null,  
         "Audited": null,
+        "Nominal": null,
+        "UTL": null,
+        "LTL": null,
         "CMS Audit": null,
         "CMS Drawing": null,
         "Measurement Instrument": null,
@@ -30,8 +33,45 @@
         "Exemption Approved Date": null,
         "Exemption Valid To": null,
         "Manually Added": null
+        
+    },
+    "Column Size":{
+        "Position Number": 16,
+        "Type": 18,
+        "GPS Specification": 16,    
+        "Gear ID": 10,  
+        "Audited": 16,
+        "CMS Audit": 12,
+        "CMS Drawing": 14,
+        "Measurement Instrument": 24,
+        "Comment": 40,
+        "MSA1": 8,
+        "MSA3": 8,
+        "Exemption Approved Date": 24,
+        "Exemption Valid To": 18,
+        "Manually Added": 16,
+        "Nominal": 8,
+        "UTL": 6,
+        "LTL": 6
     },
     "Data Validation":{
+        "Type":[
+            "Distance",
+            "Diameter",
+            "Diameter (Thread)",
+            "Gear Parameter",
+            "Angle",
+            "Radius",
+            "Chamfer",
+            "GPS (Plane)",
+            "GPS (Diameter)",
+            "GPS (Gear)",
+            "GPS (Angle)",
+            "GPS (Radius)",
+            "GPS (Chamfer)",
+            "GPS (Complex)",
+            "Surface Roughness"
+        ],
         "GPS Specification":[
             "Position",
             "Symmetry",
@@ -52,7 +92,8 @@
         "Audited":[
             "Yes",
             "No",
-            "Other (comment)"
+            "Other (comment)",
+            "Extra"
         ],
         "Measurement Instrument":[
             "CMM",
@@ -62,7 +103,8 @@
             "Contracer",
             "Manual",
             "Visual Control",
-            "N/A"
+            "N/A",
+            "TBD"
         ],
         "CMS Audit":[
             "1",
@@ -107,7 +149,8 @@
         "Audited":{
             "No": "Red",
             "Yes": "Green",
-            "Other": "Blue"
+            "Other": "Blue",
+            "Extra": "Yellow"
         },
         "Measurement Instrument":{
             "CMM": "Purple",
@@ -117,7 +160,8 @@
             "Contracer": "Orange",
             "Manual": "Red",
             "Visual Control": "Red",
-            "N/A": "None"
+            "N/A": "White",
+            "TBD": "Yellow"
         }
     },
 
@@ -162,26 +206,136 @@
             "Font Color": "000000",
             "Fill Color": "D9D9D9"
         },
+        "Yellow": {
+            "Font Color": "000000",
+            "Fill Color": "FFFF00"
+        },
         "None": {
             "Font Color": "000000",
             "Fill Color": null
         }
     },
 
-    "Column Size":{
-        "Position Number": 16,
-        "Type": 18,
-        "GPS Specification": 16,    
-        "Gear ID": 10,  
-        "Audited": 16,
-        "CMS Audit": 12,
-        "CMS Drawing": 14,
-        "Measurement Instrument": 24,
-        "Comment": 40,
-        "MSA1": 8,
-        "MSA3": 8,
-        "Exemption Approved Date": 24,
-        "Exemption Valid To": 18,
-        "Manually Added": 16
+    "Cover Settings":{
+        "Titles": {
+            "Position Number Documentation": {
+            "Font Size": 24,
+            "Font Color": "FFFFFF",
+            "Fill": "041E42",
+            "Start": "A1",
+            "End": "I3",
+            "Alignment": "left",
+            "Indents": 3
+            },
+        "Signatures": {
+            "Font Size": 14,
+            "Font Color": "FFFFFF",
+            "Fill": "041E42",
+            "Start": "A25",
+            "End": "I25",
+            "Alignment": "left",
+            "Indents": 3
+        }
+        },
+        "Heads": {
+            "Part Number": {
+                "Font Size": 11,
+                "Bold": true,
+                "Alignment": "right",
+                "Start": "A4",
+                "End": "B4",
+                "Merged Input": null
+            },
+            "Revision": {
+                "Font Size": 11,
+                "Bold": true,
+                "Alignment": "right",
+                "Start": "A5",
+                "End": "B5",
+                "Merged Input": null
+            },
+            "Path to PPap": {
+                "Font Size": 11,
+                "Bold": false,
+                "Alignment": "right",
+                "Start": "A7",
+                "End": "B7",
+                "Merged Input": "C7:H7",
+                "Font Size Input": 9
+            },
+            "Info": {
+                "Font Size": 11,
+                "Bold": false,
+                "Alignment": "right",
+                "Start": "A9",
+                "End": null,
+                "Merged Input": null
+            },
+            "DXT": {
+                "Font Size": 11,
+                "Bold": true,
+                "Alignment": "right",
+                "Start": "A27",
+                "End": "A27",
+                "Merged Input": null
+            },
+            "DXQ": {
+                "Font Size": 11,
+                "Bold": true,
+                "Alignment": "right",
+                "Start": "A34",
+                "End": null,
+                "Merged Input": null
+            },
+            "DXM": {
+                "Font Size": 11,
+                "Bold": true,
+                "Alignment": "right",
+                "Start": "A41",
+                "End": null,
+                "Merged Input": null
+            }
+        },
+        "Info": {
+            "Font Size": 11,
+            "Merge Cells": "B9:H23",
+            "Horizontal Alignment": "left",
+            "Vertical Alignment": "top",
+            "Text": "This is a documentation of which position numbers are audited, and how they are controlled.\n\nThis document states an agreement between the signing shareholders that DX is allowed to remove the documented positions from part audit measurements. As consequence, those positions are only controlled during production measurements but not revised in the statistical controls that are done on a certain percentage of parts that have been delivered to the customer.\n\nThe positions to exclude have to be agreed between design department (UP), process planning (DXTxx), quality assurance (DXQT) and the workshop manager for the part (DXMx). The reason to remove the position needs to be stated in the list below and the explanation has to be accepted by all shareholders"
+        },
+        "Box" : {
+            "Titles": [
+                "DXT",
+                "DXQ",
+                "DXM"
+            ],
+            "Total Width": 7,
+            "Heads": {
+                "Name": {
+                    "Head Height": 1,
+                    "Head Width": 1,
+                    "Bold": false                
+                },
+                "Date": {
+                    "Head Height": 1,
+                    "Head Width": 1,
+                    "Bold": false
+                },
+                "Department": {
+                    "Head Height": 1,
+                    "Head Width": 2,
+                    "Bold": false
+                },
+                "Signature": {
+                    "Head Height": 2,
+                    "Head Width": 1,
+                    "Bold": true
+                }
+                   
+                    
+            }
+        }
+
+
     }
 }

@@ -6,6 +6,7 @@ from openpyxl.formatting import Rule
 from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.worksheet.datavalidation import DataValidation
 from settings import Settings
+from xl_cover import XlCover
 
 class XlFormater():
     """
@@ -47,16 +48,18 @@ class XlFormater():
         self.table_end = f"{openpyxl.utils.get_column_letter(self.table_end_col_index)}{self.table_end_row_index}"
         self.wbook = openpyxl.load_workbook(self.xl.filename)
         self.sheet = self.wbook[self.xl.sheet_name]
-
-        self._add_table(f"Positions_REV_{self.xl.revnum}", self.table_start, self.table_end)
+        self.tablename = f"Positions_REV_{self.xl.revnum}"
+        self._add_table(self.tablename, self.table_start, self.table_end)
         self._conditional_formating()
         self._add_headings()
+        self._add_count()
         self._add_lists()
         self._adjust_sizes()
         self._alignment()
-        self._add_borders()
+        self._add_borders(start_row= self.table_start_row_index, end_row= self.sheet.max_row + 1, start_col= self.table_start_col_index, end_col= self.table_end_col_index + 1) # Borders in Table
         self._data_validation()  
         self._hide_sheets()
+        self._check_cover()
         self.wbook.active = self.sheet
         self._save()
          
@@ -92,9 +95,30 @@ class XlFormater():
 
     def _add_headings(self):
         self.sheet['B2'].value = "PART NUMBER"
+        self.sheet['B2'].font = Font(bold= True)
         self.sheet['C2'].value = self.xl.partnum
         self.sheet['B3'].value = "REVISION"
+        self.sheet['B3'].font = Font(bold= True)
         self.sheet['C3'].value = self.xl.revnum
+        self._add_thick_outer_borders(start_row = 2, end_row= 3, start_col = 2, end_col= 3)
+
+    def _add_count(self):
+        self.sheet['D2'].value = "Audited Counts:"
+        self.sheet['D2'].font = Font(bold= True)
+        self.sheet['E2'].value = "Yes"
+        self.sheet['E2'].alignment = Alignment(horizontal='center')
+        self.sheet['F2'].value = "No"
+        self.sheet['F2'].alignment = Alignment(horizontal='center')
+        self.sheet['G2'].value = "Other"
+        self.sheet['G2'].alignment = Alignment(horizontal='center')
+        self.sheet['H2'].value = "Total"
+        self.sheet['H2'].alignment = Alignment(horizontal='center')
+        self.sheet['E3'].value = f'=COUNTIF({self.tablename}[Audited], "Yes")'
+        self.sheet['F3'].value = f'=COUNTIF({self.tablename}[Audited], "No")'
+        self.sheet['G3'].value = f'=COUNTIF({self.tablename}[Audited], "Other (comment)")'
+        self.sheet['H3'].value = f'=COUNTA({self.tablename}[Position Number])'
+        self._add_thick_outer_borders(start_row = 2, end_row= 3, start_col = 4, end_col= 8)
+
 
     def _add_lists(self):
         col_index = self.df_handler.col_names.index("Comment") + self.table_start_col_index
@@ -103,11 +127,13 @@ class XlFormater():
         if len(self.duplicates) > 0:
             self.sheet[letter_head + '2'].value = "WARNING! FOUND DUPLICATES:"
             self.sheet[letter_list + '2'].value = str(self.duplicates)
-            self.sheet[letter_head + '2'].font = Font(color="FF0000")
+            self.sheet[letter_head + '2'].font = Font(color="FF0000", bold= True)
             self.sheet[letter_list + '2'].font = Font(color="FF0000")
         self.sheet[letter_head + '3'].value = "NEW POSITION NUMBERS:"
+        self.sheet[letter_head + '3'].font = Font(bold= True)
         self.sheet[letter_list + '3'].value = str(self.df_handler.new)
         self.sheet[letter_head + '4'].value = "REMOVED POSITION NUMBERS:"
+        self.sheet[letter_head + '4'].font = Font(bold= True)
         self.sheet[letter_list + '4'].value = str(self.df_handler.removed)
 
     def _adjust_sizes(self):   
@@ -124,12 +150,28 @@ class XlFormater():
         for r in range(self.table_start_row_index + 1, self.sheet.max_row + 1):
             self.sheet.cell(r, self.table_start_col_index).alignment = Alignment(horizontal='right')
 
-    def _add_borders(self):
-        thin_side = Side(style= 'thin')
-        thin_border = Border(left= thin_side, right= thin_side, top= thin_side, bottom= thin_side)
-        for row in range(self.table_start_row_index, self.sheet.max_row + 1):
-            for col in range(self.table_start_col_index, self.table_end_col_index + 1):
-                self.sheet.cell(row= row, column= col).border = thin_border
+    def _add_borders(self, start_row, end_row, start_col, end_col):
+        side = Side(style= 'thin')
+        border = Border(left= side, right= side, top= side, bottom= side)
+        for row in range(start_row, end_row):
+            for col in range(start_col, end_col):
+                self.sheet.cell(row= row, column= col).border = border
+
+    def _add_thick_outer_borders(self, start_row, end_row, start_col, end_col):
+        thin = Side(style= 'thin')
+        thick = Side(style= 'thick')
+        for row in range(start_row, end_row + 1):
+            for col in range(start_col, end_col + 1):
+                left, right, top, bottom = thin, thin, thin, thin
+                if row == start_row:
+                    top = thick
+                if row == end_row:
+                    bottom = thick
+                if col == start_col:
+                    left = thick
+                if col == end_col:
+                    right = thick
+                self.sheet.cell(row= row, column= col).border = Border(left= left, right= right, top= top, bottom= bottom)
 
     def _data_validation(self):
         for key, value in self.settings.data["Data Validation"].items():
@@ -148,9 +190,14 @@ class XlFormater():
                 self.wbook[sheet].views.sheetView[0].tabSelected = False
                 self.wbook[sheet].sheet_state = "hidden"
 
+    def _check_cover(self):
+        if "Cover" not in self.wbook.sheetnames:
+            XlCover(self.wbook)
+        XlCover(self.wbook, self.wbook['Cover']).set_part_rev(self.xl.partnum, self.xl.revnum)
+        self.wbook['Cover'].sheet_state = 'visible'
+
     def _save(self):
         self.wbook.save(self.xl.filename)
-
 
 
 if __name__ == "__main__":

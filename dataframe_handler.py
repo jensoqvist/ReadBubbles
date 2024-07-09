@@ -28,6 +28,7 @@ class DataFrameHandler():
         self._fill_df()
         if self.df_old is not None:  
             self._compare_df()
+            self._add_manual()
             self._compare()
         
     def create_new_data_frame(self):
@@ -65,6 +66,11 @@ class DataFrameHandler():
             if column not in self.df.columns:
                 self.df_old.drop(columns= [column], inplace= True)
 
+    def _add_manual(self):
+        self.df = pd.concat([self.df, self.df_old.loc[self.df_old["Manually Added"] == "Yes"]])            
+        self.df = self.df.sort_values("Position Number")
+        self.df = self.df.reset_index(drop= True)
+
     def _compare(self):
         """
         Compare Position Numbers to old Position Numbers.\n
@@ -78,12 +84,10 @@ class DataFrameHandler():
             else:
                 self.df[(self.df == row).any(axis= 1)] = self.df_old[(self.df_old == row).any(axis= 1)].values.tolist()
         for index, row in enumerate(self.df_old["Position Number"].values):
-            if self.df_old.loc[index, "Manually Added"] == "Yes":
-                self.df.loc[len(self.df)] = self.df_old[(self.df_old == row).any(axis= 1)].values.flatten().tolist()
-                self.df = self.df.sort_values("Position Number")
-                self.df = self.df.reset_index(drop= True)
             if row not in self.df["Position Number"].values:
                 removed.append(row)
+
+
         self.new = new
         self.removed = removed
       
