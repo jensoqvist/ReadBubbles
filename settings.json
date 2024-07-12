@@ -25,7 +25,7 @@
         "UTL": null,
         "LTL": null,
         "CMS Audit": null,
-        "CMS Drawing": null,
+        "Classification": "<S>",
         "Measurement Instrument": null,
         "Comment": null,
         "MSA1": null,
@@ -42,7 +42,7 @@
         "Gear ID": 10,  
         "Audited": 16,
         "CMS Audit": 12,
-        "CMS Drawing": 14,
+        "Classification": 14,
         "Measurement Instrument": 24,
         "Comment": 40,
         "MSA1": 8,
@@ -118,10 +118,11 @@
             "9",
             "10"
         ],
-        "CMS Drawing":[
-            "C",
-            "M",
-            "L"
+        "Classification":[
+            "<C>",
+            "<M>",
+            "<S>",
+            "<L>"
         ],
         "MSA1":[
             "OK",
@@ -162,13 +163,22 @@
             "Visual Control": "Red",
             "N/A": "White",
             "TBD": "Yellow"
+        },
+        "Classification":{
+            "<C>": "Red",
+            "<M>": "Orange",
+            "<L>": "Yellow"
         }
     },
 
     "Colors":{
+        "Scania Blue": {
+            "Font Color": "FFFFFF",
+            "Fill Color": "041E42"
+        },
         "Red": {
-            "Font Color": "950A16",
-            "Fill Color": "F8B6B7"
+            "Font Color": "450307",
+            "Fill Color": "F58E90"
         },
         "Green": {
             "Font Color": "004600",
@@ -235,7 +245,7 @@
             "End": "I25",
             "Alignment": "left",
             "Indents": 3
-        }
+            }
         },
         "Heads": {
             "Part Number": {
@@ -335,7 +345,9 @@
                     
             }
         }
-
-
+    },
+    "Zoom": {
+        "Cover": 145,
+        "Worksheet": 100
     }
 }

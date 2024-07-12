@@ -27,9 +27,9 @@ class DataFrameHandler():
         self.removed = []
         self._fill_df()
         if self.df_old is not None:  
-            self._compare_df()
+            self._compare_columns()
             self._add_manual()
-            self._compare()
+            self._compare_rows()
         
     def create_new_data_frame(self):
         """
@@ -54,7 +54,7 @@ class DataFrameHandler():
         if self.position_numbers is not None:
             self.df = pd.DataFrame(self.position_numbers, columns= self.col_names)
 
-    def _compare_df(self):
+    def _compare_columns(self):
         """
         Compares the entire Dataframe to an old Dataframe
         """
@@ -71,7 +71,7 @@ class DataFrameHandler():
         self.df = self.df.sort_values("Position Number")
         self.df = self.df.reset_index(drop= True)
 
-    def _compare(self):
+    def _compare_rows(self):
         """
         Compare Position Numbers to old Position Numbers.\n
         Keeps information that might have been added in the old dataframe.

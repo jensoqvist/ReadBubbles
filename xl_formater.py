@@ -50,9 +50,11 @@ class XlFormater():
         self.sheet = self.wbook[self.xl.sheet_name]
         self.tablename = f"Positions_REV_{self.xl.revnum}"
         self._add_table(self.tablename, self.table_start, self.table_end)
+        self._table_colors()
         self._conditional_formating()
         self._add_headings()
         self._add_count()
+        self._add_class_count()
         self._add_lists()
         self._adjust_sizes()
         self._alignment()
@@ -61,6 +63,7 @@ class XlFormater():
         self._hide_sheets()
         self._check_cover()
         self.wbook.active = self.sheet
+        self.sheet.sheet_view.zoomScale = self.settings.data["Zoom"]["Worksheet"]
         self._save()
          
 
@@ -93,6 +96,13 @@ class XlFormater():
         self.table.tableStyleInfo = style
         self.sheet.add_table(self.table)
 
+    def _table_colors(self):
+        color = self.settings.data["Colors"]["Scania Blue"]
+        for col in range(self.table_start_col_index, self.table_end_col_index + 1):
+            cell = self.sheet[f"{openpyxl.utils.get_column_letter(col)}{self.table_start_row_index}"]
+            cell.font = Font(color= color["Font Color"])
+            cell.fill = PatternFill(fgColor= color["Fill Color"], fill_type= 'solid')
+
     def _add_headings(self):
         self.sheet['B2'].value = "PART NUMBER"
         self.sheet['B2'].font = Font(bold= True)
@@ -118,6 +128,21 @@ class XlFormater():
         self.sheet['G3'].value = f'=COUNTIF({self.tablename}[Audited], "Other (comment)")'
         self.sheet['H3'].value = f'=COUNTA({self.tablename}[Position Number])'
         self._add_thick_outer_borders(start_row = 2, end_row= 3, start_col = 4, end_col= 8)
+
+    def _add_class_count(self):
+        self.sheet['J2'].value = "<C> Count:"
+        self.sheet['J2'].font = Font(bold= True)
+        self.sheet['J2'].alignment = Alignment(horizontal='center')
+        self.sheet['J3'].value = "<M> Count:"
+        self.sheet['J3'].font = Font(bold= True)
+        self.sheet['J3'].alignment = Alignment(horizontal='center')
+        self.sheet['J4'].value = "<L> Count:"
+        self.sheet['J4'].font = Font(bold= True)
+        self.sheet['J4'].alignment = Alignment(horizontal='center')
+        self.sheet['K2'].value = f'=SUMPRODUCT(--EXACT("<C>",{self.tablename}[Classification]))'
+        self.sheet['K3'].value = f'=SUMPRODUCT(--EXACT("<M>",{self.tablename}[Classification]))'
+        self.sheet['K4'].value = f'=SUMPRODUCT(--EXACT("<L>",{self.tablename}[Classification]))'
+        self._add_thick_outer_borders(start_row = 2, end_row= 4, start_col = 10, end_col= 11)
 
 
     def _add_lists(self):
@@ -184,6 +209,8 @@ class XlFormater():
             for r in range(self.table_start_row_index + 1, self.sheet.max_row + 1):
                 dv.add(openpyxl.utils.get_column_letter(col_index) + str(r))
 
+            
+
     def _hide_sheets(self):
         for sheet in self.wbook.get_sheet_names():
             if sheet != self.xl.sheet_name:
@@ -195,6 +222,7 @@ class XlFormater():
             XlCover(self.wbook)
         XlCover(self.wbook, self.wbook['Cover']).set_part_rev(self.xl.partnum, self.xl.revnum)
         self.wbook['Cover'].sheet_state = 'visible'
+        self.wbook['Cover'].sheet_view.zoomScale = self.settings.data["Zoom"]["Cover"]
 
     def _save(self):
         self.wbook.save(self.xl.filename)
