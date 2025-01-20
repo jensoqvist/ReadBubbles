@@ -24,7 +24,8 @@ class PdfExctractor():
         _pos_numbers = An list of the position numbers on the position number drawing before cleaning\n\n
 
     '''
-    def __init__(self, filehandler) -> None:
+    def __init__(self, filehandler, settings) -> None:
+        self.settings = settings["Extract Settings"]
         self.filehandler = filehandler
         self._pdf = self.filehandler.fullpath
         self.listdir = self.filehandler.dir
@@ -40,13 +41,13 @@ class PdfExctractor():
         self._set_duplicates()
 
     def _extract_text(self, pdf):
-        return extract_text(pdf, laparams= LAParams(detect_vertical= True,  boxes_flow= -0.5, line_overlap= 0.05))
+        return extract_text(pdf, laparams= LAParams(detect_vertical= True,  boxes_flow= self.settings["Boxes Flow"], line_overlap= self.settings["Line Overlap"], char_margin= self.settings["Char Margin"], line_margin = self.settings["Line Margin"], word_margin = self.settings["Word Margin"]))
 
     def check_for_multipdf(self):
         if re.search("\d{7}.*Sheet_\d\.pdf", self._pdf):
             for file in self.listdir:
                 if re.search("\d{7}.*Sheet_\d\.pdf", file) and self._pdf != self.filehandler.path + file:
-                    self._text += extract_text(self.filehandler.path + file)
+                    self._text += self._extract_text(self.filehandler.path + file)
 
     def find_rotated(self):
         '''
@@ -80,13 +81,13 @@ class PdfExctractor():
                 numbers.append(line)
             last_line = line
         self._pos_numbers = numbers
-        self._pos_numbers += self.find_rotated()
+        #self._pos_numbers += self.find_rotated()
 
     def _set_partnum(self, line):
         self.partnum = re.match('\d{7}', line).group(0)
 
     def _set_revnum(self, line):
-        self.revnum = line[-1]
+        self.revnum = line.split("_")[-1]
 
     def _set_duplicates(self):
         for pos in self.pos_numbers_clean:
@@ -99,7 +100,8 @@ class PdfExctractor():
         Set pos_numbers_clean from _pos_numbers after cleaning
         '''
         clean_numbers = []
-        for pos in self._pos_numbers: 
+        pos_numbers = self._pos_numbers
+        for pos in pos_numbers: 
             if re.match('[^\d]\d{4}', pos):
                 pos = pos[1:]
             if pos == '0200-0299':
@@ -107,7 +109,7 @@ class PdfExctractor():
                 continue
             elif re.search('\d{4}-\d{2}-\d{2}', pos):
                 continue # Do not add date to clean list
-            elif re.search('\d{7}', pos):
+            elif re.search('\d{6,7}', pos):
                 continue # Gear data sheet, do not add
             elif re.search('SV\d{4}', pos):
                 continue # SV
@@ -116,26 +118,35 @@ class PdfExctractor():
             elif re.search('\d{4}-R', pos):
                 continue # Thread
             elif re.search('\d{4}-\d{4}', pos): # EX. 0103-0106
-                lst = [i for i in range(int(re.search('\d{4}', pos).group(0)), int(pos[-4:]) + 1)]
-                for i in lst:
+                for i in self._check_order(first= int(re.search('\d{4}', pos).group(0)), second= int(pos[-4:])):
                     clean_numbers.append(str(i).zfill(4))
             elif re.search('\d{4}\.?\d?\/\d{4}\.?\d?', pos): #EX 0101/0102
                 clean_numbers += pos.split("/")
             elif re.search('\d{4}.\d\/\d{4}.\d\/\d{4}.\d', pos): #EX 1101.1/1102.1/1103.1
-                clean_numbers += pos.split("/")
+                clean_numbers += pos.split("/")         
+            elif re.search('.?\d{4}\.\d-\d{4}\.\d', pos): #EX 1101.1-1103.1 (1101.1, 1102.1, 1103.1)
+                match = re.search('\d{4}.\d-\d{4}.\d', pos).group(0)
+                if match[5] == match[-1]:
+                    for i in self._check_order(first= int(match[0:4]), second= int(pos[7:11])):
+                        clean_numbers.append(str(i) + "." + match[5])
             elif re.search('\d{4}.\d[-|\/]\d', pos):     #EX 1101.1-3 (1101.1, 1101.2, 1101.3)  
                 match = re.search('\d{4}.', pos).group(0)
                 for i in range(int(pos[-3]), int(pos[-1]) + 1):
                     clean_numbers.append(match + str(i))
-            elif re.search('.?\d{4}\.\d-\d{4}\.\d', pos): #EX 1101.1-1103.1 (1101.1, 1102.1, 1103.1)
-                match = re.search('\d{4}.\d-\d{4}.\d', pos).group(0)
-                if match[5] == match[-1]:
-                    lst = [i for i in range(int(match[0:4]), int(pos[7:11]) + 1)]
-                    for i in lst:
-                        clean_numbers.append(str(i) + "." + match[5])
             else:
                 clean_numbers.append(pos)
-        self.pos_numbers_clean = clean_numbers        
+        self.pos_numbers_clean = clean_numbers       
+
+    def _check_order(self, first: int, second: int):
+        '''
+        Checks order of position numbers and returns list of all numbers inbetween (inclusive)
+        '''
+        if first > second:
+            first, second = second, first
+        lst = [i for i in range(first, second + 1)]
+        return lst
+
+
 
 
 if __name__ == "__main__":

@@ -62,6 +62,8 @@ class XlFormater():
         self._data_validation()  
         self._hide_sheets()
         self._check_cover()
+        self._freeze_panes()
+        self._wrap_text()
         self.wbook.active = self.sheet
         self.sheet.sheet_view.zoomScale = self.settings.data["Zoom"]["Worksheet"]
         self._save()
@@ -223,6 +225,14 @@ class XlFormater():
         XlCover(self.wbook, self.wbook['Cover']).set_part_rev(self.xl.partnum, self.xl.revnum)
         self.wbook['Cover'].sheet_state = 'visible'
         self.wbook['Cover'].sheet_view.zoomScale = self.settings.data["Zoom"]["Cover"]
+
+    def _freeze_panes(self):
+        self.sheet.freeze_panes = f"D{self.table_start_row_index + 1}"
+
+    def _wrap_text(self):
+        col_index = self.df_handler.col_names.index("Comment") + self.table_start_col_index
+        for r in range(self.table_start_row_index + 1, self.sheet.max_row + 1):
+            self.sheet.cell(r, col_index).alignment = Alignment(wrapText= True)
 
     def _save(self):
         self.wbook.save(self.xl.filename)

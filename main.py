@@ -1,5 +1,5 @@
 """
-App that reads bubbles drawing .pdfs and creates standardised .xlsx files over positions found.
+App that reads bubble-drawing .pdfs and creates standardised .xlsx files over positions found.
 """
 
 
@@ -9,12 +9,14 @@ from pos_numbers import PositionNumbers
 from xl_handler import XlHandler
 from dataframe_handler import DataFrameHandler
 from xl_formater import XlFormater
+from settings import Settings
 
 
 def main():
+    settings = Settings().data
     file_handler = FileHandler()
     print(f"Bubbles to Excel for {file_handler.name}")
-    pdf_extractor = PdfExctractor(filehandler= file_handler)
+    pdf_extractor = PdfExctractor(filehandler= file_handler, settings= settings)
     position_numbers_from_pdf = PositionNumbers(pdf_extractor.pos_numbers_clean)
     pos_num_lenght = position_numbers_from_pdf.lenght
     xlreader = XlHandler(pdf_extractor, pos_num_lenght, path= file_handler.path)

@@ -8,8 +8,8 @@ class PositionNumber():
     Class describing a position number found on drawing
     \n\n
     Attributes:\n
-        posnum = The given position number on the drawing
-        type = the type of specification deducted from the position number, based on DX standard for position numbers
+        posnum = The given position number on the drawing\n
+        type = the type of specification deducted from the position number, based on DX standard for position numbers\n
         dic = Dictionary containing all the possible parameters a Position Number could have. Position number and Type hardcoded, the rest form settings.json
     """
     def __init__(self, posnum= None) -> None:
@@ -33,6 +33,9 @@ class PositionNumber():
             self.type =  "NOT CATEGORISED"
 
     def list_values(self):
+        """
+        Returns a list of the values in the PositionNumber dictionary
+        """
         return [*self.dic.values()]
 
     def list_keys(self):

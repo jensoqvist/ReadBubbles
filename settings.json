@@ -8,12 +8,14 @@
 		"Angle": "03\\d{2}",
 		"Radius": "04\\d{2}",
 		"Chamfer": "05\\d{2}",
+		"Visual": "08\\d{2}",
+		"Other": "09\\d{2}",
 		"GPS (Plane)": "10\\d{2}",
 		"GPS (Diameter)": "11\\d{2}",
 		"GPS (Gear)": "12\\d{2}",
 		"GPS (Angle)": "13\\d{2}",
 		"GPS (Radius)": "14\\d{2}",
-		"GPS (Chamfer)": "15\\d{2}",
+		"GPS (Transition)": "15\\d{2}",
 		"GPS (Complex)": "17\\d{2}",
 		"Surface Roughness": "2\\d{3}"
 	},
@@ -63,12 +65,14 @@
             "Angle",
             "Radius",
             "Chamfer",
+			"Visual",
+			"Other",
             "GPS (Plane)",
             "GPS (Diameter)",
             "GPS (Gear)",
             "GPS (Angle)",
             "GPS (Radius)",
-            "GPS (Chamfer)",
+            "GPS (Transition)",
             "GPS (Complex)",
             "Surface Roughness"
         ],
@@ -76,7 +80,7 @@
             "Position",
             "Symmetry",
             "Perpendicularity",
-            "Paralellism",
+            "Parallelism",
             "Flatness",
             "Coaxiality",
             "Concentricity",
@@ -87,7 +91,9 @@
             "Angularity",
             "Straightness",
             "Runout",
-            "Total Runout"
+            "Total Runout",
+			"Conicity",
+			"Transition"
         ],
         "Audited":[
             "Yes",
@@ -311,7 +317,7 @@
             "Merge Cells": "B9:H23",
             "Horizontal Alignment": "left",
             "Vertical Alignment": "top",
-            "Text": "This is a documentation of which position numbers are audited, and how they are controlled.\n\nThis document states an agreement between the signing shareholders that DX is allowed to remove the documented positions from part audit measurements. As consequence, those positions are only controlled during production measurements but not revised in the statistical controls that are done on a certain percentage of parts that have been delivered to the customer.\n\nThe positions to exclude have to be agreed between design department (UP), process planning (DXTxx), quality assurance (DXQT) and the workshop manager for the part (DXMx). The reason to remove the position needs to be stated in the list below and the explanation has to be accepted by all shareholders"
+            "Text": "This is a documentation of which position numbers are audited, and how they are controlled.\n\nThis document states an agreement between the signing shareholders that DX is allowed to remove the documented positions from part audit measurements. As consequence, those positions are only controlled during production measurements but not revised in the statistical controls that are done on a certain percentage of parts that have been delivered to the customer.\n\nThe positions to exclude have to be agreed between process planning (DXTxx), quality assurance (DXQT) and the workshop manager for the part (DXMx). The reason to remove the position needs to be stated in the list below and the explanation has to be accepted by all shareholders"
         },
         "Box" : {
             "Titles": [
@@ -349,5 +355,13 @@
     "Zoom": {
         "Cover": 145,
         "Worksheet": 100
+    },
+    "Extract Settings": {
+        "Detect Vertical": true,
+        "Line Overlap": 0.1,
+        "Char Margin":  2.0,
+        "Line Margin":  0.5,
+        "Word Margin":  0.1,
+        "Boxes Flow":  0.25
     }
 }

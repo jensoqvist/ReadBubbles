@@ -47,7 +47,7 @@ class FileHandler():
             self.fullpath = os.path.abspath(self.args[1])
             self.args_checked = True
         else: 
-            self.fullpath = os.path.abspath(input("\nPlese input path to pdf: ").strip('"'))
+            self.fullpath = os.path.abspath(input("\nPlease input path to pdf: ").strip('"'))
 
     def split_path(self):
         """
