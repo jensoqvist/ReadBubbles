@@ -168,7 +168,7 @@ class XlFormater():
         row = self.xl.skip_rows
         responsibilitys = self.settings.data["Responsible"]
         for key, value in responsibilitys.items():
-            self.sheet[openpyxl.utils.get_column_letter(self.df_handler.col_names.index(value["Responsibilitys"][0]) + self.table_start_col_index) + str(row)].value = f"Resbonsible: {key}"
+            self.sheet[openpyxl.utils.get_column_letter(self.df_handler.col_names.index(value["Responsibilitys"][0]) + self.table_start_col_index) + str(row)].value = f"Responsible: {key}"
             for resbonsibility in value["Responsibilitys"]:
                 color = self.settings.data["Colors"][value["Color"]]
                 col_index = self.df_handler.col_names.index(resbonsibility) + self.table_start_col_index

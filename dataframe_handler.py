@@ -98,7 +98,7 @@ class DataFrameHandler():
             old_col = col
             if col == "MSA2/3" and "MSA3" in self.df_old.columns:
                 old_col = "MSA3"
-            old_value = self.df_old.loc[((self.df_old["Position Number"] == row)), old_col]
+            old_value = self.df_old.loc[((self.df_old["Position Number"] == row) & (self.df_old["Type"] == self.df.iloc[index, 1])), old_col]
             self.df.iloc[index, col_index + 2] = old_value.to_list()[0]
 
       
