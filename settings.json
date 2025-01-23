@@ -22,19 +22,20 @@
     "Columns":{
         "GPS Specification": null,    
         "Gear ID": null,  
+        "Classification": "<S>",
         "Audited": null,
+        "Measurement Instrument": null,
+        "Comment": null,
+        "CMS Audit": null,
+        "MSA1": null,
+        "MSA2/3": null,
+        "Manually Added": null,
         "Nominal": null,
         "UTL": null,
         "LTL": null,
-        "CMS Audit": null,
-        "Classification": "<S>",
-        "Measurement Instrument": null,
-        "Comment": null,
-        "MSA1": null,
-        "MSA3": null,
         "Exemption Approved Date": null,
-        "Exemption Valid To": null,
-        "Manually Added": null
+        "Exemption Valid To": null
+        
         
     },
     "Column Size":{
@@ -48,7 +49,7 @@
         "Measurement Instrument": 24,
         "Comment": 40,
         "MSA1": 8,
-        "MSA3": 8,
+        "MSA2/3": 10,
         "Exemption Approved Date": 24,
         "Exemption Valid To": 18,
         "Manually Added": 16,
@@ -134,7 +135,7 @@
             "OK",
             "NOK"
         ],
-        "MSA3":[
+        "MSA2/3":[
             "OK",
             "NOK"
         ],
@@ -149,7 +150,7 @@
             "NOK": "Red",
              "OK": "Green"
         },
-        "MSA3":{
+        "MSA2/3":{
             "NOK": "Red",
              "OK": "Green"
         },
@@ -181,6 +182,18 @@
         "Scania Blue": {
             "Font Color": "FFFFFF",
             "Fill Color": "041E42"
+        },
+        "Scania Blue 200": {
+            "Font Color": "000000",
+            "Fill Color": "87AFE8"
+        },
+        "Scania Blue 100": {
+            "Font Color": "000000",
+            "Fill Color": "BACDE8"
+        },
+        "Scania Blue 50": {
+            "Font Color": "000000",
+            "Fill Color": "E4E9F1"
         },
         "Red": {
             "Font Color": "450307",
@@ -230,6 +243,30 @@
             "Font Color": "000000",
             "Fill Color": null
         }
+    },
+    "Responsible":{
+        "DXQT": {
+            "Responsibilitys": [
+                "Position Number", 
+                "Type", 
+                "GPS Specification", 
+                "Gear ID", 
+                "Classification"
+            ],
+            "Color": "Scania Blue 200"
+        },
+        "DXQM/DXT": {
+            "Responsibilitys": [
+                "Audited", 
+                "Measurement Instrument", 
+                "Comment", 
+                "CMS Audit", 
+                "MSA1",
+                "MSA2/3"
+            ],
+            "Color": "Scania Blue 100"
+        }
+
     },
 
     "Cover Settings":{

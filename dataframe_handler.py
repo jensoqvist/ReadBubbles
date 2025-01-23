@@ -26,10 +26,13 @@ class DataFrameHandler():
         self.new = []
         self.removed = []
         self._fill_df()
-        if self.df_old is not None:  
-            self._compare_columns()
-            self._add_manual()
+        if self.df_old is not None:     
             self._compare_rows()
+            self._compare_columns() 
+            self._add_manual()
+            
+            
+            
         
     def create_new_data_frame(self):
         """
@@ -58,13 +61,15 @@ class DataFrameHandler():
         """
         Compares the entire Dataframe to an old Dataframe
         """
-        old_columns = self.df_old.columns
-        for column in self.df.columns:
+        old_columns = self.df_old.columns.to_list()
+        columns = self.df.columns.to_list()
+        for column in columns:
             if column not in old_columns:
                 self.df_old.insert(self.df.columns.get_loc(column), column, None)
         for column in old_columns:
             if column not in self.df.columns:
                 self.df_old.drop(columns= [column], inplace= True)
+        self.df_old = self.df_old[columns]
 
     def _add_manual(self):
         self.df = pd.concat([self.df, self.df_old.loc[self.df_old["Manually Added"] == "Yes"]])            
@@ -82,14 +87,20 @@ class DataFrameHandler():
             if row not in self.df_old["Position Number"].values:
                 new.append(row)
             else:
-                self.df[(self.df == row).any(axis= 1)] = self.df_old[(self.df_old == row).any(axis= 1)].values.tolist()
-        for index, row in enumerate(self.df_old["Position Number"].values):
+                self._compare_row(row, index)
             if row not in self.df["Position Number"].values:
                 removed.append(row)
-
-
         self.new = new
         self.removed = removed
+
+    def _compare_row(self, row, index):
+        for col_index, col in enumerate(self.col_names[2:]):  
+            old_col = col
+            if col == "MSA2/3" and "MSA3" in self.df_old.columns:
+                old_col = "MSA3"
+            old_value = self.df_old.loc[((self.df_old["Position Number"] == row)), old_col]
+            self.df.iloc[index, col_index + 2] = old_value.to_list()[0]
+
       
 
 if __name__ == "__main__":

@@ -56,6 +56,7 @@ class XlFormater():
         self._add_count()
         self._add_class_count()
         self._add_lists()
+        self._add_responsibilitys()
         self._adjust_sizes()
         self._alignment()
         self._add_borders(start_row= self.table_start_row_index, end_row= self.sheet.max_row + 1, start_col= self.table_start_col_index, end_col= self.table_end_col_index + 1) # Borders in Table
@@ -148,20 +149,33 @@ class XlFormater():
 
 
     def _add_lists(self):
-        col_index = self.df_handler.col_names.index("Comment") + self.table_start_col_index
+        col_index = self.df_handler.col_names.index("Exemption Approved Date") + self.table_start_col_index
         letter_head = openpyxl.utils.get_column_letter(col_index)
         letter_list = openpyxl.utils.get_column_letter(col_index + 1)
         if len(self.duplicates) > 0:
             self.sheet[letter_head + '2'].value = "WARNING! FOUND DUPLICATES:"
             self.sheet[letter_list + '2'].value = str(self.duplicates)
-            self.sheet[letter_head + '2'].font = Font(color="FF0000", bold= True)
+            self.sheet[letter_head + '2'].font = Font(color="FF0000", bold= True, size= 9)
             self.sheet[letter_list + '2'].font = Font(color="FF0000")
         self.sheet[letter_head + '3'].value = "NEW POSITION NUMBERS:"
-        self.sheet[letter_head + '3'].font = Font(bold= True)
+        self.sheet[letter_head + '3'].font = Font(bold= True, size= 9)
         self.sheet[letter_list + '3'].value = str(self.df_handler.new)
         self.sheet[letter_head + '4'].value = "REMOVED POSITION NUMBERS:"
-        self.sheet[letter_head + '4'].font = Font(bold= True)
+        self.sheet[letter_head + '4'].font = Font(bold= True, size= 9)
         self.sheet[letter_list + '4'].value = str(self.df_handler.removed)
+
+    def _add_responsibilitys(self):
+        row = self.xl.skip_rows
+        responsibilitys = self.settings.data["Responsible"]
+        for key, value in responsibilitys.items():
+            self.sheet[openpyxl.utils.get_column_letter(self.df_handler.col_names.index(value["Responsibilitys"][0]) + self.table_start_col_index) + str(row)].value = f"Resbonsible: {key}"
+            for resbonsibility in value["Responsibilitys"]:
+                color = self.settings.data["Colors"][value["Color"]]
+                col_index = self.df_handler.col_names.index(resbonsibility) + self.table_start_col_index
+                letter = openpyxl.utils.get_column_letter(col_index)
+                cell = self.sheet[f"{letter}{row}"]
+                cell.fill = PatternFill(fgColor= color["Fill Color"], fill_type= 'solid')
+
 
     def _adjust_sizes(self):   
         self.sheet.column_dimensions["A"].width = 4
@@ -209,9 +223,7 @@ class XlFormater():
             dv.errorTitle = "Invalid Entry"
             self.sheet.add_data_validation(dv)
             for r in range(self.table_start_row_index + 1, self.sheet.max_row + 1):
-                dv.add(openpyxl.utils.get_column_letter(col_index) + str(r))
-
-            
+                dv.add(openpyxl.utils.get_column_letter(col_index) + str(r)) 
 
     def _hide_sheets(self):
         for sheet in self.wbook.get_sheet_names():
@@ -233,6 +245,7 @@ class XlFormater():
         col_index = self.df_handler.col_names.index("Comment") + self.table_start_col_index
         for r in range(self.table_start_row_index + 1, self.sheet.max_row + 1):
             self.sheet.cell(r, col_index).alignment = Alignment(wrapText= True)
+
 
     def _save(self):
         self.wbook.save(self.xl.filename)
