@@ -62,7 +62,6 @@ class PdfExctractor():
             elif re.match("2\d{3,3}", pos) and not re.match("2\d{4}", pos):
                 rotated_clean.append(pos)
         return(rotated_clean)
-        
 
     def _set_pos_numbers(self):
         '''

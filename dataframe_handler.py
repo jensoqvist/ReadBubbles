@@ -30,9 +30,6 @@ class DataFrameHandler():
             self._compare_rows()
             self._compare_columns() 
             self._add_manual()
-            
-            
-            
         
     def create_new_data_frame(self):
         """

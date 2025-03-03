@@ -55,7 +55,11 @@
         "Manually Added": 16,
         "Nominal": 8,
         "UTL": 6,
-        "LTL": 6
+        "LTL": 6,
+        "Amount Measured": 18,
+        "Action": 8,
+        "Ppk/Cpk": 10,
+        "Limit": 10
     },
     "Data Validation":{
         "Type":[
@@ -266,12 +270,11 @@
             ],
             "Color": "Scania Blue 100"
         }
-
     },
 
     "Cover Settings":{
         "Titles": {
-            "Position Number Documentation": {
+            "Position Data Sheet": {
             "Font Size": 24,
             "Font Color": "FFFFFF",
             "Fill": "041E42",
@@ -383,15 +386,65 @@
                     "Head Height": 2,
                     "Head Width": 1,
                     "Bold": true
-                }
-                   
-                    
+                }   
             }
         }
     },
+    "PPAP":{
+        "Columns":[
+            "Position Number",
+            "Type",
+            "GPS Specification",
+            "Classification",
+            "Audited",
+            "Measurement Instrument",
+            "Amount Measured",
+            "Action",
+            "Limit",
+            "Ppk/Cpk",
+            "Comment"
+        ],
+        "Copy Columns":[
+            "Type",
+            "GPS Specification",
+            "Classification",
+            "Audited",
+            "Measurement Instrument"
+        ],
+        "Data Validation":{
+            "Action": [
+                "Yes",
+                "No"
+                ]},
+        "Conditional":{
+            "Action":{
+                "Yes": "Red",
+                 "No": "Green"
+            },
+        "Conditional Amount": 50,
+        "Conditional Ppk":{
+            "start":1,
+            "mid": 1.33,
+            "end":1.67
+            }      
+        },
+        "Chart":{
+            "Width": 25,
+            "Type": "bar",
+            "Style": "11",
+            "Orientation": "maxMin",
+            "Overlapp": 100,
+            "Gap Width": 50,
+            "Ppk Color": "00B050",
+            "Limit Color": "C0504D"
+        }
+    },
+
+
     "Zoom": {
         "Cover": 145,
-        "Worksheet": 100
+        "Worksheet": 100,
+        "Ppap": 80
     },
     "Extract Settings": {
         "Detect Vertical": true,

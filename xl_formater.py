@@ -7,6 +7,7 @@ from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.worksheet.datavalidation import DataValidation
 from settings import Settings
 from xl_cover import XlCover
+from xl_ppap import XlPpap
 
 class XlFormater():
     """
@@ -34,7 +35,7 @@ class XlFormater():
         self.table_end = f"{openpyxl.utils.get_column_letter(self.table_end_col_index)}{self.table_end_row_index}"\n
     
     """
-    def __init__(self, xlhandler, df_handler, duplicates) -> None:
+    def __init__(self, xlhandler, df_handler= None, duplicates= None, run = True) -> None:
         self.settings = Settings()
         self.xl = xlhandler
         self.df_handler = df_handler
@@ -49,6 +50,11 @@ class XlFormater():
         self.wbook = openpyxl.load_workbook(self.xl.filename)
         self.sheet = self.wbook[self.xl.sheet_name]
         self.tablename = f"Positions_REV_{self.xl.revnum}"
+        if run == True:
+            self.run()
+         
+
+    def run(self):
         self._add_table(self.tablename, self.table_start, self.table_end)
         self._table_colors()
         self._conditional_formating()
@@ -62,13 +68,15 @@ class XlFormater():
         self._add_borders(start_row= self.table_start_row_index, end_row= self.sheet.max_row + 1, start_col= self.table_start_col_index, end_col= self.table_end_col_index + 1) # Borders in Table
         self._data_validation()  
         self._hide_sheets()
-        self._check_cover()
+        self._check_cover() 
+        self._create_ppap_sheet()
         self._freeze_panes()
         self._wrap_text()
         self.wbook.active = self.sheet
         self.sheet.sheet_view.zoomScale = self.settings.data["Zoom"]["Worksheet"]
         self._save()
-         
+        
+
 
     def _conditional_formating(self):
         for colname, words in self.settings.data["Conditional"].items():
@@ -176,7 +184,6 @@ class XlFormater():
                 cell = self.sheet[f"{letter}{row}"]
                 cell.fill = PatternFill(fgColor= color["Fill Color"], fill_type= 'solid')
 
-
     def _adjust_sizes(self):   
         self.sheet.column_dimensions["A"].width = 4
         self.sheet.row_dimensions[self.table_start_row_index].height = 30
@@ -238,6 +245,14 @@ class XlFormater():
         self.wbook['Cover'].sheet_state = 'visible'
         self.wbook['Cover'].sheet_view.zoomScale = self.settings.data["Zoom"]["Cover"]
 
+    def _create_ppap_sheet(self):
+        org_table_pos = f"'{self.xl.sheet_name}'!{self.table_start}:{self.table_end}"
+        if f"{self.xl.sheet_name} PPAP" in self.wbook.sheetnames:
+            del self.wbook[f"{self.xl.sheet_name} PPAP"]
+        xl_ppap = XlPpap(settings= self.settings, wbook= self.wbook, xlhandler= self.xl, df= self.df.loc[:, "Position Number"], org_tablename= self.tablename, org_table_pos= org_table_pos)
+        self.wbook[xl_ppap.sheet_name].sheet_state = 'visible'
+        self.wbook[xl_ppap.sheet_name].sheet_view.zoomScale = self.settings.data["Zoom"]["Ppap"]
+
     def _freeze_panes(self):
         self.sheet.freeze_panes = f"D{self.table_start_row_index + 1}"
 
@@ -245,7 +260,6 @@ class XlFormater():
         col_index = self.df_handler.col_names.index("Comment") + self.table_start_col_index
         for r in range(self.table_start_row_index + 1, self.sheet.max_row + 1):
             self.sheet.cell(r, col_index).alignment = Alignment(wrapText= True)
-
 
     def _save(self):
         self.wbook.save(self.xl.filename)
