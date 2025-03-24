@@ -247,10 +247,14 @@ class XlPpap():
         self.sheet['D2'].value = "Action Count:"
         self.sheet['D2'].font = Font(bold= True)
         self.sheet['D3'].value = f'=COUNTIF({self.tablename}[Action], "Yes")'
-        self._add_thick_outer_borders(start_row = 2, end_row= 3, start_col = 4, end_col= 8)
+        self._add_thick_outer_borders(start_row = 2, end_row= 3, start_col = 4, end_col= 4)
 
 
     def _add_text(self):
         text = "This sheet is intended for visualization of the PPAP process and decided actions. Responsible: DXT"
         self.sheet['F2'].value = text
         self.sheet['F2'].font = Font(bold= True)
+
+
+if __name__ == "__main__":
+    pass

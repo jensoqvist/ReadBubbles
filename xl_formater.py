@@ -247,11 +247,11 @@ class XlFormater():
 
     def _create_ppap_sheet(self):
         org_table_pos = f"'{self.xl.sheet_name}'!{self.table_start}:{self.table_end}"
-        if f"{self.xl.sheet_name} PPAP" in self.wbook.sheetnames:
-            del self.wbook[f"{self.xl.sheet_name} PPAP"]
-        xl_ppap = XlPpap(settings= self.settings, wbook= self.wbook, xlhandler= self.xl, df= self.df.loc[:, "Position Number"], org_tablename= self.tablename, org_table_pos= org_table_pos)
-        self.wbook[xl_ppap.sheet_name].sheet_state = 'visible'
-        self.wbook[xl_ppap.sheet_name].sheet_view.zoomScale = self.settings.data["Zoom"]["Ppap"]
+        ppap_sheet = f"{self.xl.sheet_name} PPAP"
+        if ppap_sheet not in self.wbook.sheetnames:
+            xl_ppap = XlPpap(settings= self.settings, wbook= self.wbook, xlhandler= self.xl, df= self.df.loc[:, "Position Number"], org_tablename= self.tablename, org_table_pos= org_table_pos)       
+        self.wbook[ppap_sheet].sheet_view.zoomScale = self.settings.data["Zoom"]["Ppap"]
+        self.wbook[ppap_sheet].sheet_state = 'hidden'
 
     def _freeze_panes(self):
         self.sheet.freeze_panes = f"D{self.table_start_row_index + 1}"

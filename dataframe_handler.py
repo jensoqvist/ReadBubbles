@@ -27,9 +27,10 @@ class DataFrameHandler():
         self.removed = []
         self._fill_df()
         if self.df_old is not None:     
-            self._compare_rows()
             self._compare_columns() 
             self._add_manual()
+            self._compare_rows()           
+            
         
     def create_new_data_frame(self):
         """
@@ -53,6 +54,7 @@ class DataFrameHandler():
         """
         if self.position_numbers is not None:
             self.df = pd.DataFrame(self.position_numbers, columns= self.col_names)
+            self.df["CMS Audit"] = pd.to_numeric(self.df["CMS Audit"], downcast= 'integer')
 
     def _compare_columns(self):
         """
@@ -60,6 +62,8 @@ class DataFrameHandler():
         """
         old_columns = self.df_old.columns.to_list()
         columns = self.df.columns.to_list()
+        if "MSA3" in self.df_old.columns:
+            self.df_old.rename(columns={"MSA3": "MSA2/3"})
         for column in columns:
             if column not in old_columns:
                 self.df_old.insert(self.df.columns.get_loc(column), column, None)
@@ -84,19 +88,23 @@ class DataFrameHandler():
             if row not in self.df_old["Position Number"].values:
                 new.append(row)
             else:
-                self._compare_row(row, index)
+                self._compare_pos(row, index)
+        for index, row in enumerate(self.df_old["Position Number"].values):
             if row not in self.df["Position Number"].values:
                 removed.append(row)
         self.new = new
         self.removed = removed
 
-    def _compare_row(self, row, index):
-        for col_index, col in enumerate(self.col_names[2:]):  
-            old_col = col
-            if col == "MSA2/3" and "MSA3" in self.df_old.columns:
-                old_col = "MSA3"
-            old_value = self.df_old.loc[((self.df_old["Position Number"] == row) & (self.df_old["Type"] == self.df.iloc[index, 1])), old_col]
-            self.df.iloc[index, col_index + 2] = old_value.to_list()[0]
+    def _compare_pos(self, row, index):
+        new_shape= self.df[self.df["Position Number"] == row].shape
+        old_shape= self.df_old[self.df_old["Position Number"] == row].shape
+        if new_shape == old_shape:
+            self.df[self.df["Position Number"] == row] = self.df_old[self.df_old["Position Number"] == row].values
+        else:
+            self.df.drop(index)
+            for index, r in enumerate(self.df_old[self.df_old["Position Number"] == row].values):
+                self.df.loc[self.df.index.max() + 1] = r
+
 
       
 
