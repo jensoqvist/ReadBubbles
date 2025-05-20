@@ -20,7 +20,7 @@
 		"Surface Roughness": "2\\d{3}"
 	},
     "Columns":{
-        "GPS Specification": null,    
+        "Specification": null,    
         "Gear ID": null,  
         "Classification": "<S>",
         "Audited": null,
@@ -41,7 +41,7 @@
     "Column Size":{
         "Position Number": 16,
         "Type": 18,
-        "GPS Specification": 16,    
+        "Specification": 16,    
         "Gear ID": 10,  
         "Audited": 16,
         "CMS Audit": 12,
@@ -81,7 +81,7 @@
             "GPS (Complex)",
             "Surface Roughness"
         ],
-        "GPS Specification":[
+        "Specification":[
             "Position",
             "Symmetry",
             "Perpendicularity",
@@ -253,7 +253,7 @@
             "Responsibilitys": [
                 "Position Number", 
                 "Type", 
-                "GPS Specification", 
+                "Specification", 
                 "Gear ID", 
                 "Classification"
             ],
@@ -394,7 +394,7 @@
         "Columns":[
             "Position Number",
             "Type",
-            "GPS Specification",
+            "Specification",
             "Classification",
             "Audited",
             "Measurement Instrument",
@@ -406,7 +406,7 @@
         ],
         "Copy Columns":[
             "Type",
-            "GPS Specification",
+            "Specification",
             "Classification",
             "Audited",
             "Measurement Instrument"

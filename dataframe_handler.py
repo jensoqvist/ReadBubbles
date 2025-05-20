@@ -26,10 +26,12 @@ class DataFrameHandler():
         self.new = []
         self.removed = []
         self._fill_df()
-        if self.df_old is not None:     
+        if self.df_old is not None: 
+            self._rename_old_columns()    
             self._compare_columns() 
             self._add_manual()
-            self._compare_rows()           
+            self._compare_rows()     
+        self._sort_df()      
             
         
     def create_new_data_frame(self):
@@ -56,14 +58,18 @@ class DataFrameHandler():
             self.df = pd.DataFrame(self.position_numbers, columns= self.col_names)
             self.df["CMS Audit"] = pd.to_numeric(self.df["CMS Audit"], downcast= 'integer')
 
+    def _rename_old_columns(self):
+        if "MSA3" in self.df_old.columns:
+            self.df_old.rename(columns={"MSA3": "MSA2/3"}, inplace=True)
+        if "GPS Specification" in self.df_old.columns:
+            self.df_old.rename(columns={"GPS Specification": "Specification"}, inplace= True)
+
     def _compare_columns(self):
         """
         Compares the entire Dataframe to an old Dataframe
         """
         old_columns = self.df_old.columns.to_list()
         columns = self.df.columns.to_list()
-        if "MSA3" in self.df_old.columns:
-            self.df_old.rename(columns={"MSA3": "MSA2/3"})
         for column in columns:
             if column not in old_columns:
                 self.df_old.insert(self.df.columns.get_loc(column), column, None)
@@ -74,7 +80,7 @@ class DataFrameHandler():
 
     def _add_manual(self):
         self.df = pd.concat([self.df, self.df_old.loc[self.df_old["Manually Added"] == "Yes"]])            
-        self.df = self.df.sort_values("Position Number")
+        #self.df = self.df.sort_values("Position Number")
         self.df = self.df.reset_index(drop= True)
 
     def _compare_rows(self):
@@ -104,6 +110,9 @@ class DataFrameHandler():
             self.df.drop(index)
             for index, r in enumerate(self.df_old[self.df_old["Position Number"] == row].values):
                 self.df.loc[self.df.index.max() + 1] = r
+
+    def _sort_df(self):
+        self.df.sort_values(["Gear ID", "Position Number"], ascending=[True, True], inplace=True)
 
 
       
