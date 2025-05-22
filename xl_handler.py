@@ -1,6 +1,5 @@
 from os.path import isfile, join
 import openpyxl
-from dataframe_handler import DataFrameHandler
 import pandas as pd
 
 
@@ -52,7 +51,7 @@ class XlHandler():
             for i in range(0, int(self.revnum)):
                 self.partnum + "_" + str(int(self.revnum) - i)
                 try:
-                    self.df_old = DataFrameHandler().read_xl(self.filename, header= self.header_index, skiprows= self.skip_rows, dtype= str, sheet_name= self.partnum + "_" + str(int(self.revnum) - i), keep_default_na= False)
+                    self.df_old = pd.read_excel(self.filename, header= self.header_index, skiprows= self.skip_rows, dtype= str, sheet_name= self.partnum + "_" + str(int(self.revnum) - i), keep_default_na= False)
                     self.df_old.drop(self.df_old.columns[self.df_old.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
                     self.df_old.dropna(subset= ["Position Number"], inplace= True)
                     self.df_old["CMS Audit"] = pd.to_numeric(self.df_old["CMS Audit"], downcast= 'integer')

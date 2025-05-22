@@ -1,5 +1,6 @@
 import pandas as pd
 from pos_number import PositionNumber
+from df_add_gears import GearParameters
 
 class DataFrameHandler():
     """
@@ -17,7 +18,7 @@ class DataFrameHandler():
         self.new = List of new position numbers\n
         self.removed = List of removed position numbers
     """
-    def __init__(self, df_old= None, position_nums = None, xl_handler= None) -> None:
+    def __init__(self, df_old= None, position_nums = None, xl_handler= None, run= False) -> None:
         self.col_names = PositionNumber().list_keys()
         self.df_old = df_old
         self.position_numbers = position_nums
@@ -25,14 +26,18 @@ class DataFrameHandler():
         self.df = self.create_new_data_frame()
         self.new = []
         self.removed = []
+        if run == True:
+            self._run()
+             
+    def _run(self):
         self._fill_df()
+        self._check_for_gears()
         if self.df_old is not None: 
             self._rename_old_columns()    
             self._compare_columns() 
             self._add_manual()
             self._compare_rows()     
-        self._sort_df()      
-            
+        self._sort_df()  
         
     def create_new_data_frame(self):
         """
@@ -58,6 +63,25 @@ class DataFrameHandler():
             self.df = pd.DataFrame(self.position_numbers, columns= self.col_names)
             self.df["CMS Audit"] = pd.to_numeric(self.df["CMS Audit"], downcast= 'integer')
 
+    def _check_for_gears(self):  
+        gear_ids = []
+        count_gears = self.df["Position Number"].value_counts().get("0200-0299")
+        self.df= self.df[self.df["Position Number"] != "0200-0299"]
+        self.df= self.df[self.df["Position Number"] != "0299"]
+        print("GEAR COUNTS:" + str(count_gears))
+        if self.df_old is not None:      
+            gear_ids = (self.df_old[(self.df_old["Gear ID"] != "")])["Gear ID"].unique().tolist()
+            self._rename_old_columns() 
+            index= self.df_old[(self.df_old["Position Number"] == "0299") & (self.df_old["Specification"] == "")].index
+            self.df_old.drop(index, inplace= True)
+        if count_gears > 0 and len(gear_ids) != count_gears:
+            for i in range(count_gears):
+                gear_ids.append(input(f"Please input Gear ID {i + 1}: "))
+        print(f"Gear IDs: {gear_ids}")
+        for id in gear_ids:
+            self.df= GearParameters(df= self.df, gear_id= id).df
+
+
     def _rename_old_columns(self):
         if "MSA3" in self.df_old.columns:
             self.df_old.rename(columns={"MSA3": "MSA2/3"}, inplace=True)
@@ -66,7 +90,7 @@ class DataFrameHandler():
 
     def _compare_columns(self):
         """
-        Compares the entire Dataframe to an old Dataframe
+        Compares the column of the Dataframe to the old Dataframe
         """
         old_columns = self.df_old.columns.to_list()
         columns = self.df.columns.to_list()
@@ -80,7 +104,6 @@ class DataFrameHandler():
 
     def _add_manual(self):
         self.df = pd.concat([self.df, self.df_old.loc[self.df_old["Manually Added"] == "Yes"]])            
-        #self.df = self.df.sort_values("Position Number")
         self.df = self.df.reset_index(drop= True)
 
     def _compare_rows(self):

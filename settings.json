@@ -41,7 +41,7 @@
     "Column Size":{
         "Position Number": 16,
         "Type": 18,
-        "Specification": 16,    
+        "Specification": 18,    
         "Gear ID": 10,  
         "Audited": 16,
         "CMS Audit": 12,
@@ -453,5 +453,84 @@
         "Line Margin":  0.5,
         "Word Margin":  0.1,
         "Boxes Flow":  0.25
+    },
+
+    "Gear Settings":{
+        "Parameters":{
+            "0201": "MdK Average",
+            "0202": "Rmd",
+            "0203": "Fr",
+            "0204": "Fp Left",
+            "0205": "Fp Right",
+            "0206": "fpt L",
+            "0207": "fpt R",
+            "0208": "fu L",
+            "0209": "fu R",
+            "0210": "Fa L Max",
+            "0211": "Fa R Max",
+            "0213": "fHa L Min",
+            "0214": "fHa L Max",
+            "0215": "fHa L Average",
+            "0217": "fHa R Min",
+            "0218": "fHa R Max",
+            "0219": "fHa R Average",
+            "0221": "ffa L Max",
+            "0222": "ffa R Max",
+            "0223": "fHa L Var",
+            "0224": "fHa R Var",
+            "0225": "Ca L Average",
+            "0226": "Ca R Average",
+            "0227": "Rv L Average",
+            "0228": "Rv R Average",
+            "0229": "TR L Average",
+            "0230": "TR R Average",
+            "0231": "Fb L Max",
+            "0232": "Fb R Max",
+            "0234": "fHb L Min",
+            "0235": "fHb L Max",
+            "0236": "fHb L Average",
+            "0238": "fHb R Min",
+            "0239": "fHb R Max",
+            "0240": "fHb R Average",
+            "0242": "Kona Average",
+            "0243": "ffb L Max",
+            "0244": "ffb R Max",
+            "0245": "fHb L Var",
+            "0246": "fHb R Var",
+            "0247": "Cb L Average",
+            "0248": "Cb R Average",
+            "0289": "MdK Difference",
+            "0290": "Tip Diameter",
+            "0291": "Root Diameter",
+            "0299": "Max Crown Height"
+        },
+        "Special Char":{
+            "Gear":[
+                "0201",
+                "0203",
+                "0204",
+                "0205",
+                "0213",
+                "0214",
+                "0217",
+                "0218",
+                "0221",
+                "0222",
+                "0234",
+                "0235",
+                "0238",
+                "0239"
+            ],
+            "Spline":[
+                "0201",
+                "0204",
+                "0205",
+                "0210",
+                "0211",
+                "0231",
+                "0232"
+            ]
+        }
     }
+
 }
