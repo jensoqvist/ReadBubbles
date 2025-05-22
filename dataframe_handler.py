@@ -135,7 +135,7 @@ class DataFrameHandler():
                 self.df.loc[self.df.index.max() + 1] = r
 
     def _sort_df(self):
-        self.df.sort_values(["Gear ID", "Position Number"], ascending=[True, True], inplace=True)
+        self.df = self.df.sort_values(["Gear ID", "Position Number"], ascending=[True, True], na_position="first")
 
 
       
