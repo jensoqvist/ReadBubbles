@@ -31,9 +31,9 @@ class DataFrameHandler():
              
     def _run(self):
         self._fill_df()
+        self._rename_old_columns() 
         self._check_for_gears()
-        if self.df_old is not None: 
-            self._rename_old_columns()    
+        if self.df_old is not None:  
             self._compare_columns() 
             self._add_manual()
             self._compare_rows()     
@@ -64,29 +64,17 @@ class DataFrameHandler():
             self.df["CMS Audit"] = pd.to_numeric(self.df["CMS Audit"], downcast= 'integer')
 
     def _check_for_gears(self):  
-        gear_ids = []
-        count_gears = self.df["Position Number"].value_counts().get("0200-0299")
-        self.df= self.df[self.df["Position Number"] != "0200-0299"]
-        self.df= self.df[self.df["Position Number"] != "0299"]
-        print("GEAR COUNTS:" + str(count_gears))
-        if self.df_old is not None:      
-            gear_ids = (self.df_old[(self.df_old["Gear ID"] != "")])["Gear ID"].unique().tolist()
-            self._rename_old_columns() 
-            index= self.df_old[(self.df_old["Position Number"] == "0299") & (self.df_old["Specification"] == "")].index
-            self.df_old.drop(index, inplace= True)
-        if count_gears > 0 and len(gear_ids) != count_gears:
-            for i in range(count_gears):
-                gear_ids.append(input(f"Please input Gear ID {i + 1}: "))
-        print(f"Gear IDs: {gear_ids}")
-        for id in gear_ids:
-            self.df= GearParameters(df= self.df, gear_id= id).df
-
+        gear= GearParameters(df= self.df, df_old= self.df_old)
+        gear.run()
+        self.df= gear.df
+        self.df_old= gear.df_old
 
     def _rename_old_columns(self):
-        if "MSA3" in self.df_old.columns:
-            self.df_old.rename(columns={"MSA3": "MSA2/3"}, inplace=True)
-        if "GPS Specification" in self.df_old.columns:
-            self.df_old.rename(columns={"GPS Specification": "Specification"}, inplace= True)
+        if self.df_old is not None: 
+            if "MSA3" in self.df_old.columns:
+                self.df_old.rename(columns={"MSA3": "MSA2/3"}, inplace=True)
+            if "GPS Specification" in self.df_old.columns:
+                self.df_old.rename(columns={"GPS Specification": "Specification"}, inplace= True)
 
     def _compare_columns(self):
         """
