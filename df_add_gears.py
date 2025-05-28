@@ -24,6 +24,8 @@ class GearParameters():
 
     def _count_gears(self):
         self.gear_count= self.df["Position Number"].value_counts().get("0200-0299")
+        if self.gear_count == None:
+            self.gear_count = 0
         print("GEAR COUNTS:" + str(self.gear_count))
 
     def _delete_old(self):

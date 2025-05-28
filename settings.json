@@ -21,7 +21,7 @@
 	},
     "Columns":{
         "Specification": null,    
-        "Gear ID": null,  
+        "Gear ID": "",  
         "Classification": "<S>",
         "Audited": null,
         "Measurement Instrument": null,
