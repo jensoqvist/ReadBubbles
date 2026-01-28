@@ -60,7 +60,7 @@ class GearParameters():
         for posnum, param in self.parameters.items():
             columns["Position Number"] = posnum
             columns["Specification"] = param
-            if self._check_classification(posnum):
+            if self._check_classification(posnum, id):
                 columns["Classification"]= "<M>"
                 columns["Comment"]= "According to STD4567"
             else:
@@ -68,8 +68,8 @@ class GearParameters():
                 columns["Comment"]= ""
             self.df = self.df._append(columns, ignore_index= True)
 
-    def _check_classification(self, num):
-        if "AK" in self.ids:
+    def _check_classification(self, num, id):
+        if id == "AK":
             if num in self.special["Gear"]:
                 return True
         else:
