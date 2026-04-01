@@ -29,7 +29,7 @@ class XlHandler():
         self.revnum = pdf_extractor.revnum
         self.sheet_name = f"{self.partnum}_{self.revnum}"
         self.path = path
-        self.filename = join(path, f"{self.partnum} Posnr.xlsx")
+        self.filename = join(path, f"{self.partnum} Positionsdatablad.xlsx")
         self.pos_num_lenght = pos_num_lenght
         self.skip_rows = 5
         self.header_index = 0

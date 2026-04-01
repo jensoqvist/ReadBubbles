@@ -62,7 +62,7 @@ class GearParameters():
             columns["Specification"] = param
             if self._check_classification(posnum, id):
                 columns["Classification"]= "<M>"
-                columns["Comment"]= "According to STD4567"
+                columns["Comment"]= "Classification according to STD4567"
             else:
                 columns["Classification"]= "<S>"
                 columns["Comment"]= ""

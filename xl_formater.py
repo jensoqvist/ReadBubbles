@@ -1,5 +1,6 @@
 import openpyxl
 from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.utils.cell import column_index_from_string
 from openpyxl.styles import Alignment, Color, Fill, Font, PatternFill, Border
 from openpyxl.styles.borders import Border, Side
 from openpyxl.formatting import Rule
@@ -8,6 +9,8 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from settings import Settings
 from xl_cover import XlCover
 from xl_ppap import XlPpap
+from xl_change_notes import XlChangeNotes
+from colorama import Fore, Style
 
 class XlFormater():
     """
@@ -61,15 +64,18 @@ class XlFormater():
         self._add_headings()
         self._add_count()
         self._add_class_count()
-        self._add_lists()
+        #self._add_lists() // legacy, not in use
+        self._print_lists()
         self._add_responsibilitys()
         self._adjust_sizes()
         self._alignment()
-        self._add_borders(start_row= self.table_start_row_index, end_row= self.sheet.max_row + 1, start_col= self.table_start_col_index, end_col= self.table_end_col_index + 1) # Borders in Table
         self._data_validation()  
+        self._set_format()
+        self._add_borders(start_row= self.table_start_row_index, end_row= self.sheet.max_row + 1, start_col= self.table_start_col_index, end_col= self.table_end_col_index + 1) # Borders in Table
         self._hide_sheets()
         self._check_cover() 
         self._create_ppap_sheet()
+        self._change_notes()
         self._freeze_panes()
         self._wrap_text()
         self.wbook.active = self.sheet
@@ -140,20 +146,22 @@ class XlFormater():
         self.sheet['H3'].value = f'=COUNTA({self.tablename}[Position Number])'
         self._add_thick_outer_borders(start_row = 2, end_row= 3, start_col = 4, end_col= 8)
 
-    def _add_class_count(self):
-        self.sheet['J2'].value = "<C> Count:"
-        self.sheet['J2'].font = Font(bold= True)
-        self.sheet['J2'].alignment = Alignment(horizontal='center')
-        self.sheet['J3'].value = "<M> Count:"
-        self.sheet['J3'].font = Font(bold= True)
-        self.sheet['J3'].alignment = Alignment(horizontal='center')
-        self.sheet['J4'].value = "<L> Count:"
-        self.sheet['J4'].font = Font(bold= True)
-        self.sheet['J4'].alignment = Alignment(horizontal='center')
-        self.sheet['K2'].value = f'=SUMPRODUCT(--EXACT("<C>",{self.tablename}[Classification]))'
-        self.sheet['K3'].value = f'=SUMPRODUCT(--EXACT("<M>",{self.tablename}[Classification]))'
-        self.sheet['K4'].value = f'=SUMPRODUCT(--EXACT("<L>",{self.tablename}[Classification]))'
-        self._add_thick_outer_borders(start_row = 2, end_row= 4, start_col = 10, end_col= 11)
+    def _add_class_count(self, col= 'M', start_row= 2):
+        second_col_index= column_index_from_string(col) + 1
+        second_col= openpyxl.utils.get_column_letter(second_col_index)
+        self.sheet[f'{col}{start_row}'].value = "<C> Count:"
+        self.sheet[f'{col}{start_row}'].font = Font(bold= True)
+        self.sheet[f'{col}{start_row}'].alignment = Alignment(horizontal='center')
+        self.sheet[f'{col}{start_row + 1}'].value = "<M> Count:"
+        self.sheet[f'{col}{start_row + 1}'].font = Font(bold= True)
+        self.sheet[f'{col}{start_row + 1}'].alignment = Alignment(horizontal='center')
+        self.sheet[f'{col}{start_row + 2}'].value = "<L> Count:"
+        self.sheet[f'{col}{start_row + 2}'].font = Font(bold= True)
+        self.sheet[f'{col}{start_row + 2}'].alignment = Alignment(horizontal='center')
+        self.sheet[f'{second_col}{start_row}'].value = f'=SUMPRODUCT(--EXACT("<C>",{self.tablename}[Classification]))'
+        self.sheet[f'{second_col}{start_row + 1}'].value = f'=SUMPRODUCT(--EXACT("<M>",{self.tablename}[Classification]))'
+        self.sheet[f'{second_col}{start_row + 2}'].value = f'=SUMPRODUCT(--EXACT("<L>",{self.tablename}[Classification]))'
+        self._add_thick_outer_borders(start_row = start_row, end_row= start_row + 2, start_col = column_index_from_string(col), end_col= second_col_index)
 
 
     def _add_lists(self):
@@ -171,6 +179,14 @@ class XlFormater():
         self.sheet[letter_head + '4'].value = "REMOVED POSITION NUMBERS:"
         self.sheet[letter_head + '4'].font = Font(bold= True, size= 9)
         self.sheet[letter_list + '4'].value = str(self.df_handler.removed)
+
+    def _print_lists(self):
+        if len(self.duplicates) > 0:
+            print(Fore.RED + f"WARNING! FOUND DUPLICATES: {str(self.duplicates)}" + '\033[0m\n')
+        print("NEW POSITION NUMBERS:\n" + str(self.df_handler.new) + "\n")
+        print("REMOVED POSITION NUMBERS:\n" + str(self.df_handler.removed) + "\n")
+        print()
+        
 
     def _add_responsibilitys(self):
         row = self.xl.skip_rows
@@ -232,6 +248,15 @@ class XlFormater():
             for r in range(self.table_start_row_index + 1, self.sheet.max_row + 1):
                 dv.add(openpyxl.utils.get_column_letter(col_index) + str(r)) 
 
+
+    def _set_format(self):
+        cols= ["Exemption Approved Date", "Exemption Valid To"]
+        for col in cols:
+            col_index = self.df_handler.col_names.index(col) + self.table_start_col_index
+            for r in range(self.table_start_row_index + 1, self.sheet.max_row + 1):
+                cell= self.sheet[openpyxl.utils.get_column_letter(col_index) + str(r)]
+                cell.number_format='YYYY-MM-DD'
+
     def _hide_sheets(self):
         for sheet in self.wbook.get_sheet_names():
             if sheet != self.xl.sheet_name:
@@ -252,6 +277,9 @@ class XlFormater():
             xl_ppap = XlPpap(settings= self.settings, wbook= self.wbook, xlhandler= self.xl, df= self.df.loc[:, "Position Number"], org_tablename= self.tablename, org_table_pos= org_table_pos)       
         self.wbook[ppap_sheet].sheet_view.zoomScale = self.settings.data["Zoom"]["Ppap"]
         self.wbook[ppap_sheet].sheet_state = 'hidden'
+
+    def _change_notes(self):
+        XlChangeNotes(wbook= self.wbook)
 
     def _freeze_panes(self):
         self.sheet.freeze_panes = f"D{self.table_start_row_index + 1}"

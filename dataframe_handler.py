@@ -35,8 +35,9 @@ class DataFrameHandler():
         self._check_for_gears()
         if self.df_old is not None:  
             self._compare_columns() 
+            self._compare_rows() 
             self._add_manual()
-            self._compare_rows()     
+        self._datetime_format()
         self._sort_df()  
         
     def create_new_data_frame(self):
@@ -101,6 +102,7 @@ class DataFrameHandler():
         """
         new = []
         removed = []
+        print()
         for index, row in enumerate(self.df["Position Number"].values):
             if row not in self.df_old["Position Number"].values:
                 new.append(row)
@@ -113,17 +115,30 @@ class DataFrameHandler():
         self.removed = removed
 
     def _compare_pos(self, row, index):
-        new_shape= self.df[self.df["Position Number"] == row].shape
-        old_shape= self.df_old[self.df_old["Position Number"] == row].shape
+        new_pos= self.df[(self.df["Position Number"] == row)]
+        new_shape= new_pos.shape
+        old_pos= self.df_old[(self.df_old["Position Number"] == row) & (self.df_old["Manually Added"] != "Yes")]
+        old_shape= old_pos.shape
         if new_shape == old_shape:
-            self.df[self.df["Position Number"] == row] = self.df_old[self.df_old["Position Number"] == row].values
+            self.df[(self.df["Position Number"] == row)] = old_pos.values
         else:
             self.df.drop(index)
-            for index, r in enumerate(self.df_old[self.df_old["Position Number"] == row].values):
+            for index, r in enumerate(old_pos.values):
                 self.df.loc[self.df.index.max() + 1] = r
 
     def _sort_df(self):
         self.df = self.df.sort_values(["Gear ID", "Position Number"], ascending=[True, True], na_position="first")
+
+    def _datetime_format(self):
+        cols= ["Exemption Approved Date", "Exemption Valid To"]
+        for col in cols:
+            try:
+                self.df[col] = pd.to_datetime(self.df[col].astype(str), format='ISO8601')
+            except Exception as e:
+                print("\n--------------------------")
+                print(f"\nCould not convert column '{col}' to specified datetime format, any incorrect dates in the column?\n")
+                print("--------------------------\n\n")
+                
 
 
       

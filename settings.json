@@ -33,8 +33,8 @@
         "Nominal": null,
         "UTL": null,
         "LTL": null,
-        "Exemption Approved Date": null,
-        "Exemption Valid To": null
+        "Exemption Approved Date": "",
+        "Exemption Valid To": ""
         
         
     },
@@ -59,7 +59,16 @@
         "Amount Measured": 18,
         "Action": 8,
         "Ppk/Cpk": 10,
-        "Limit": 10
+        "Limit": 10,
+        "Date": 12,
+        "Rev": 8,
+        "Description": 85,
+        "Reason": 28,
+        "SSSID": 16,
+        "Verified by ID": 16,
+        "Verified Date": 16,
+        "Change Type": 24
+
     },
     "Data Validation":{
         "Type":[
@@ -181,6 +190,17 @@
             "<L>": "Yellow"
         }
     },
+    "Change Notes Validation":{
+        "Change Type":[
+            "New Revision",
+            "Program",
+            "Measurement Instrument",
+            "Method",
+            "PDB",
+            "Bubble Drawing",
+            "Other"
+        ]
+    },
 
     "Colors":{
         "Scania Blue": {
@@ -267,6 +287,27 @@
                 "CMS Audit", 
                 "MSA1",
                 "MSA2/3"
+            ],
+            "Color": "Scania Blue 100"
+        }
+    },
+    "Change Responsible":{
+        "DXQ": {
+            "Responsibilitys": [
+                "Date",
+                "Rev",
+                "Position Number", 
+                "Change Type", 
+                "Description", 
+                "SSSID"
+            ],
+            "Color": "Scania Blue 200"
+        },
+        "DXT": {
+            "Responsibilitys": [
+                "Verified by ID", 
+                "Verified Date", 
+                "Comment"
             ],
             "Color": "Scania Blue 100"
         }
