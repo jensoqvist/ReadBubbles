@@ -17,12 +17,12 @@ def main():
     file_handler = FileHandler()
     print(f"Bubbles to Excel for {file_handler.name}")
     pdf_extractor = PdfExctractor(filehandler= file_handler, settings= settings)
-    position_numbers_from_pdf = PositionNumbers(pdf_extractor.pos_numbers_clean)
+    position_numbers_from_pdf = PositionNumbers(pdf_extractor.pos_numbers_clean, settings= settings)
     pos_num_lenght = position_numbers_from_pdf.lenght
     xlreader = XlHandler(pdf_extractor, pos_num_lenght, path= file_handler.path)
     df_handler = DataFrameHandler(df_old= xlreader.df_old, position_nums= position_numbers_from_pdf.position_numbers, xl_handler= xlreader, run= True)
     df_handler.to_xl()
-    xl_formater = XlFormater(xlhandler= xlreader, df_handler= df_handler, duplicates= pdf_extractor.duplicates)
+    xl_formater = XlFormater(xlhandler= xlreader, df_handler= df_handler, duplicates= pdf_extractor.duplicates, settings= settings)
     print("Done!")
     input("Press Enter to exit...")
 

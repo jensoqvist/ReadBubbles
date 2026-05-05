@@ -8,6 +8,7 @@ Class PdfExctractor
 from pdfminer.high_level import extract_text
 from pdfminer.layout import LAParams
 import re
+from collections import Counter
 
 
 class PdfExctractor():
@@ -44,22 +45,22 @@ class PdfExctractor():
         return extract_text(pdf, laparams= LAParams(detect_vertical= True,  boxes_flow= self.settings["Boxes Flow"], line_overlap= self.settings["Line Overlap"], char_margin= self.settings["Char Margin"], line_margin = self.settings["Line Margin"], word_margin = self.settings["Word Margin"]))
 
     def check_for_multipdf(self):
-        if re.search("\d{7}.*Sheet_\d\.pdf", self._pdf):
+        if re.search(r"\d{7}.*Sheet_\d\.pdf", self._pdf):
             for file in self.listdir:
-                if re.search("\d{7}.*Sheet_\d\.pdf", file) and self._pdf != self.filehandler.path + file:
+                if re.search(r"\d{7}.*Sheet_\d\.pdf", file) and self._pdf != self.filehandler.path + file:
                     self._text += self._extract_text(self.filehandler.path + file)
 
     def find_rotated(self):
         '''
         Finds positions that are not strictly horizontal or vertical.
         '''
-        rotated = re.findall("\n\n\d(?:\n{2}|\s)\d(?:\n{2}|\s)?\d(?:\n{2}|\s)\d", self._text, re.MULTILINE)
+        rotated = re.findall(r"\n\n\d(?:\n{2}|\s)\d(?:\n{2}|\s)?\d(?:\n{2}|\s)\d", self._text, re.MULTILINE)
         rotated_clean = []
         for x in sorted(rotated):
             pos = x.replace("\n", "").replace(" ", "")
-            if re.match("0(?:3|4)\d{2}", pos):
+            if re.match(r"0(?:3|4)\d{2}", pos):
                 rotated_clean.append(pos)
-            elif re.match("2\d{3,3}", pos) and not re.match("2\d{4}", pos):
+            elif re.match(r"2\d{3,3}", pos) and not re.match(r"2\d{4}", pos):
                 rotated_clean.append(pos)
         return(rotated_clean)
 
@@ -76,23 +77,27 @@ class PdfExctractor():
                 self._set_revnum(line)
             elif last_line == "ISO" and line == "6411":
                 continue # Skip ISO 6411 - R
-            if re.search('\d{4}', line):
+            if re.search(r'\d{4}', line):
                 numbers.append(line)
             last_line = line
         self._pos_numbers = numbers
         #self._pos_numbers += self.find_rotated()
 
     def _set_partnum(self, line):
-        self.partnum = re.match('\d{7}', line).group(0)
+        self.partnum = re.match(r'\d{7}', line).group(0)
 
     def _set_revnum(self, line):
         self.revnum = line.split("_")[-1]
 
     def _set_duplicates(self):
-        for pos in self.pos_numbers_clean:
-            if self.pos_numbers_clean.count(pos) > 1 and pos != '0200-0299':
-                self.pos_numbers_clean.remove(pos)
+        counts = Counter(self.pos_numbers_clean)
+        clean= []
+        for pos, count in counts.items():
+            if count > 1 and pos != '0200-0299':
                 self.duplicates.append(pos)
+            else:
+                clean.extend([pos] * count)
+        self.pos_numbers_clean= clean
 
     def _cleaning(self):
         '''
@@ -101,35 +106,35 @@ class PdfExctractor():
         clean_numbers = []
         pos_numbers = self._pos_numbers
         for pos in pos_numbers: 
-            if re.match('[^\d]\d{4}', pos):
+            if re.match(r'[^\d]\d{4}', pos):
                 pos = pos[1:]
             if pos == '0200-0299':
                 clean_numbers.append(pos)
                 continue
-            elif re.search('\d{4}-\d{2}-\d{2}', pos):
+            elif re.search(r'\d{4}-\d{2}-\d{2}', pos):
                 continue # Do not add date to clean list
-            elif re.search('\d{6,7}', pos):
+            elif re.search(r'\d{6,7}', pos):
                 continue # Gear data sheet, do not add
-            elif re.search('SV\d{4}', pos):
+            elif re.search(r'SV\d{4}', pos):
                 continue # SV
-            elif re.search('TB-?\d{4}', pos):
+            elif re.search(r'TB-?\d{4}', pos):
                 continue # No TB
-            elif re.search('\d{4}-R', pos):
+            elif re.search(r'\d{4}-R', pos):
                 continue # Thread
-            elif re.search('\d{4}-\d{4}', pos): # EX. 0103-0106
-                for i in self._check_order(first= int(re.search('\d{4}', pos).group(0)), second= int(pos[-4:])):
+            elif re.search(r'\d{4}-\d{4}', pos): # EX. 0103-0106
+                for i in self._check_order(first= int(re.search(r'\d{4}', pos).group(0)), second= int(pos[-4:])):
                     clean_numbers.append(str(i).zfill(4))
-            elif re.search('\d{4}\.?\d?\/\d{4}\.?\d?', pos): #EX 0101/0102
+            elif re.search(r'\d{4}\.?\d?\/\d{4}\.?\d?', pos): #EX 0101/0102
                 clean_numbers += pos.split("/")
-            elif re.search('\d{4}.\d\/\d{4}.\d\/\d{4}.\d', pos): #EX 1101.1/1102.1/1103.1
+            elif re.search(r'\d{4}.\d\/\d{4}.\d\/\d{4}.\d', pos): #EX 1101.1/1102.1/1103.1
                 clean_numbers += pos.split("/")         
-            elif re.search('.?\d{4}\.\d-\d{4}\.\d', pos): #EX 1101.1-1103.1 (1101.1, 1102.1, 1103.1)
-                match = re.search('\d{4}.\d-\d{4}.\d', pos).group(0)
+            elif re.search(r'.?\d{4}\.\d-\d{4}\.\d', pos): #EX 1101.1-1103.1 (1101.1, 1102.1, 1103.1)
+                match = re.search(r'\d{4}.\d-\d{4}.\d', pos).group(0)
                 if match[5] == match[-1]:
                     for i in self._check_order(first= int(match[0:4]), second= int(pos[7:11])):
                         clean_numbers.append(str(i) + "." + match[5])
-            elif re.search('\d{4}.\d[-|\/]\d', pos):     #EX 1101.1-3 (1101.1, 1101.2, 1101.3)  
-                match = re.search('\d{4}.', pos).group(0)
+            elif re.search(r'\d{4}.\d[-|\/]\d', pos):     #EX 1101.1-3 (1101.1, 1101.2, 1101.3)  
+                match = re.search(r'\d{4}.', pos).group(0)
                 for i in range(int(pos[-3]), int(pos[-1]) + 1):
                     clean_numbers.append(match + str(i))
             else:

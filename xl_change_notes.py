@@ -16,8 +16,8 @@ class XlChangeNotes():
     """
     Class that creates and formats the change notes sheet
     """
-    def __init__(self, wbook) -> None:
-        self.settings = Settings()
+    def __init__(self, wbook, settings = Settings()) -> None:
+        self.settings = settings
         self.wbook = wbook
         self.SHEET_NAME = "Change_Notes"
         self.TABLE_NAME = "changeNotesTable"
@@ -76,7 +76,7 @@ class XlChangeNotes():
         self._table_colors()
 
     def _table_colors(self):
-        color = self.settings.data["Colors"]["Scania Blue"]
+        color = self.settings["Colors"]["Scania Blue"]
         for col in range(self.START_COL, self.END_COL + 1):
             cell = self.sheet[f"{openpyxl.utils.get_column_letter(col)}{self.START_ROW}"]
             cell.font = Font(color= color["Font Color"])
@@ -93,7 +93,7 @@ class XlChangeNotes():
         for i, col in enumerate(self.cols):
             col_index = i +  self.START_COL
             try:
-                self.sheet.column_dimensions[openpyxl.utils.get_column_letter(col_index)].width = self.settings.data["Column Size"][col]
+                self.sheet.column_dimensions[openpyxl.utils.get_column_letter(col_index)].width = self.settings["Column Size"][col]
             except:
                 self.sheet.column_dimensions[openpyxl.utils.get_column_letter(col_index)].width = 24
           
@@ -128,7 +128,7 @@ class XlChangeNotes():
                 self.sheet.cell(row= row, column= col).border = Border(left= left, right= right, top= top, bottom= bottom)
 
     def _data_validation(self):
-        for key, value in self.settings.data["Change Notes Validation"].items():
+        for key, value in self.settings["Change Notes Validation"].items():
             validation_string = ", ".join(value)
             col_index = self.cols.index(key) + self.START_COL
             dv = DataValidation(type= "list", formula1= f'"{validation_string}"', allow_blank= True)
@@ -141,11 +141,11 @@ class XlChangeNotes():
 
     def _add_responsibilitys(self):
         row = self.START_ROW - 1
-        responsibilitys = self.settings.data["Change Responsible"]
+        responsibilitys = self.settings["Change Responsible"]
         for key, value in responsibilitys.items():
             self.sheet[openpyxl.utils.get_column_letter(self.cols.index(value["Responsibilitys"][0]) + self.START_COL) + str(row)].value = f"Responsible: {key}"
             for resbonsibility in value["Responsibilitys"]:
-                color = self.settings.data["Colors"][value["Color"]]
+                color = self.settings["Colors"][value["Color"]]
                 col_index = self.cols.index(resbonsibility) + self.START_COL
                 letter = openpyxl.utils.get_column_letter(col_index)
                 cell = self.sheet[f"{letter}{row}"]

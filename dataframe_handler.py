@@ -109,7 +109,7 @@ class DataFrameHandler():
             else:
                 self._compare_pos(row, index)
         for index, row in enumerate(self.df_old["Position Number"].values):
-            if row not in self.df["Position Number"].values:
+            if row not in self.df["Position Number"].values and row not in self.df_old[self.df_old["Manually Added"] == "Yes"]["Position Number"].values:
                 removed.append(row)
         self.new = new
         self.removed = removed

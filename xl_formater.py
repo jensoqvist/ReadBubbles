@@ -38,8 +38,8 @@ class XlFormater():
         self.table_end = f"{openpyxl.utils.get_column_letter(self.table_end_col_index)}{self.table_end_row_index}"\n
     
     """
-    def __init__(self, xlhandler, df_handler= None, duplicates= None, run = True) -> None:
-        self.settings = Settings()
+    def __init__(self, xlhandler, df_handler= None, duplicates= None, run = True, settings = Settings().data) -> None:
+        self.settings = settings
         self.xl = xlhandler
         self.df_handler = df_handler
         self.df = df_handler.df
@@ -79,13 +79,13 @@ class XlFormater():
         self._freeze_panes()
         self._wrap_text()
         self.wbook.active = self.sheet
-        self.sheet.sheet_view.zoomScale = self.settings.data["Zoom"]["Worksheet"]
+        self.sheet.sheet_view.zoomScale = self.settings["Zoom"]["Worksheet"]
         self._save()
         
 
 
     def _conditional_formating(self):
-        for colname, words in self.settings.data["Conditional"].items():
+        for colname, words in self.settings["Conditional"].items():
             self._conditional_col(colname, words)
 
     def _conditional_col(self, colname, words):  
@@ -94,7 +94,7 @@ class XlFormater():
             col_letter = openpyxl.utils.get_column_letter(col[rownum].column)
             if col[rownum].value == colname:
                 for word, color in words.items():
-                    colors = self.settings.data["Colors"][color]
+                    colors = self.settings["Colors"][color]
                     fill = PatternFill()
                     if colors["Fill Color"] is not None:
                         fill = PatternFill( bgColor= colors["Fill Color"], fill_type='solid')
@@ -114,7 +114,7 @@ class XlFormater():
         self.sheet.add_table(self.table)
 
     def _table_colors(self):
-        color = self.settings.data["Colors"]["Scania Blue"]
+        color = self.settings["Colors"]["Scania Blue"]
         for col in range(self.table_start_col_index, self.table_end_col_index + 1):
             cell = self.sheet[f"{openpyxl.utils.get_column_letter(col)}{self.table_start_row_index}"]
             cell.font = Font(color= color["Font Color"])
@@ -190,11 +190,11 @@ class XlFormater():
 
     def _add_responsibilitys(self):
         row = self.xl.skip_rows
-        responsibilitys = self.settings.data["Responsible"]
+        responsibilitys = self.settings["Responsible"]
         for key, value in responsibilitys.items():
             self.sheet[openpyxl.utils.get_column_letter(self.df_handler.col_names.index(value["Responsibilitys"][0]) + self.table_start_col_index) + str(row)].value = f"Responsible: {key}"
             for resbonsibility in value["Responsibilitys"]:
-                color = self.settings.data["Colors"][value["Color"]]
+                color = self.settings["Colors"][value["Color"]]
                 col_index = self.df_handler.col_names.index(resbonsibility) + self.table_start_col_index
                 letter = openpyxl.utils.get_column_letter(col_index)
                 cell = self.sheet[f"{letter}{row}"]
@@ -206,7 +206,7 @@ class XlFormater():
         for i, col in enumerate(self.df_handler.col_names):
             col_index = i +  self.table_start_col_index
             try:
-                self.sheet.column_dimensions[openpyxl.utils.get_column_letter(col_index)].width = self.settings.data["Column Size"][col]
+                self.sheet.column_dimensions[openpyxl.utils.get_column_letter(col_index)].width = self.settings["Column Size"][col]
             except:
                 self.sheet.column_dimensions[openpyxl.utils.get_column_letter(col_index)].width = 4
           
@@ -238,7 +238,7 @@ class XlFormater():
                 self.sheet.cell(row= row, column= col).border = Border(left= left, right= right, top= top, bottom= bottom)
 
     def _data_validation(self):
-        for key, value in self.settings.data["Data Validation"].items():
+        for key, value in self.settings["Data Validation"].items():
             validation_string = ", ".join(value)
             col_index = self.df.columns.get_loc(key) + self.table_start_col_index
             dv = DataValidation(type= "list", formula1= f'"{validation_string}"', allow_blank= True)
@@ -268,18 +268,18 @@ class XlFormater():
             XlCover(self.wbook)
         XlCover(self.wbook, self.wbook['Cover']).set_part_rev(self.xl.partnum, self.xl.revnum)
         self.wbook['Cover'].sheet_state = 'visible'
-        self.wbook['Cover'].sheet_view.zoomScale = self.settings.data["Zoom"]["Cover"]
+        self.wbook['Cover'].sheet_view.zoomScale = self.settings["Zoom"]["Cover"]
 
     def _create_ppap_sheet(self):
         org_table_pos = f"'{self.xl.sheet_name}'!{self.table_start}:{self.table_end}"
         ppap_sheet = f"{self.xl.sheet_name} PPAP"
         if ppap_sheet not in self.wbook.sheetnames:
             xl_ppap = XlPpap(settings= self.settings, wbook= self.wbook, xlhandler= self.xl, df= self.df.loc[:, "Position Number"], org_tablename= self.tablename, org_table_pos= org_table_pos)       
-        self.wbook[ppap_sheet].sheet_view.zoomScale = self.settings.data["Zoom"]["Ppap"]
+        self.wbook[ppap_sheet].sheet_view.zoomScale = self.settings["Zoom"]["Ppap"]
         self.wbook[ppap_sheet].sheet_state = 'hidden'
 
     def _change_notes(self):
-        XlChangeNotes(wbook= self.wbook)
+        XlChangeNotes(wbook= self.wbook, settings= self.settings)
 
     def _freeze_panes(self):
         self.sheet.freeze_panes = f"D{self.table_start_row_index + 1}"

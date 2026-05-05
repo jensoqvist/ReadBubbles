@@ -12,21 +12,21 @@ class PositionNumber():
         type = the type of specification deducted from the position number, based on DX standard for position numbers\n
         dic = Dictionary containing all the possible parameters a Position Number could have. Position number and Type hardcoded, the rest form settings.json
     """
-    def __init__(self, posnum= None) -> None:
+    def __init__(self, posnum= None, settings= Settings().data) -> None:
         self.posnum = posnum
         self.type = None
-        self.settings = Settings()
+        self.settings = settings
         if posnum is not None:
             self.set_type()
         self.dic = {
             "Position Number": self.posnum,
             "Type": self.type,
         }
-        self.dic.update(self.settings.data["Columns"])
+        self.dic.update(self.settings["Columns"])
 
 
     def set_type(self):
-        for key, value in self.settings.data["PosTypes"].items():
+        for key, value in self.settings["PosTypes"].items():
             if re.match(value, self.posnum):
                 self.type = key
         if self.type == None:

@@ -12,7 +12,7 @@ from openpyxl.chart import BarChart, Series, Reference
 
 class XlPpap():
     def __init__(self, settings, wbook, xlhandler, df, org_tablename, org_table_pos) -> None:
-        self.settings = settings.data
+        self.settings = settings
         self.wbook = wbook
         self.xl = xlhandler
         self.df = df

@@ -69,7 +69,7 @@ class GearParameters():
             self.df = self.df._append(columns, ignore_index= True)
 
     def _check_classification(self, num, id):
-        if id == "AK":
+        if "AK" in id.upper():
             if num in self.special["Gear"]:
                 return True
         else:
