@@ -31,7 +31,7 @@ class PdfExctractor():
         self._pdf = self.filehandler.fullpath
         self.listdir = self.filehandler.dir
         self._text = self._extract_text(self._pdf)
-        self.partnum = ""
+        self.partnum = None
         self.revnum = ""
         self._pos_numbers = []
         self.pos_numbers_clean = []
@@ -71,8 +71,8 @@ class PdfExctractor():
         last_line = ""
         numbers = []
         for line in self._text.split(): 
-            if last_line == "Pos":
-                self._set_partnum(line)
+            if "Pos" in last_line :
+                self._set_partnum(line, last_line)
             elif re.match("Rev_", line):
                 self._set_revnum(line)
             elif last_line == "ISO" and line == "6411":
@@ -81,10 +81,16 @@ class PdfExctractor():
                 numbers.append(line)
             last_line = line
         self._pos_numbers = numbers
+        if self.partnum is None:
+            self.partnum = input("Partnumber not found!\nPlease input Partnumber: ")
         #self._pos_numbers += self.find_rotated()
 
-    def _set_partnum(self, line):
-        self.partnum = re.match(r'\d{7}', line).group(0)
+    def _set_partnum(self, line, last_line):
+        for l in [line, last_line]:
+            match = re.match(r'\d{7}', l)
+            if match is not None:
+                self.partnum = match.group(0)
+
 
     def _set_revnum(self, line):
         self.revnum = line.split("_")[-1]
@@ -121,6 +127,10 @@ class PdfExctractor():
                 continue # No TB
             elif re.search(r'\d{4}-R', pos):
                 continue # Thread
+            elif re.search(r'STD\d{4}', pos):
+                continue # STD
+            elif re.search(r'3834-4', pos):
+                continue # Welding STD ISO 3834-4
             elif re.search(r'\d{4}-\d{4}', pos): # EX. 0103-0106
                 for i in self._check_order(first= int(re.search(r'\d{4}', pos).group(0)), second= int(pos[-4:])):
                     clean_numbers.append(str(i).zfill(4))

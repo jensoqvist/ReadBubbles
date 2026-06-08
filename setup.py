@@ -1,13 +1,46 @@
 from cx_Freeze import setup, Executable
 
-
-include_files = ["settings.json", "scania-symbol.png"]
-includes = []
-excludes = []
-packages = []
+options= {
+    "include_files": ["settings.json", "scania-symbol.png"],
+    "includes" : [],
+    "excludes" : [
+        "matplotlib",
+        "fontTools",
+        "contourpy",
+        "kiwisolver",
+        "cycler",
+        "pyparsing", 
+        "tkinter", 
+        "unittest", 
+        "pydoc_data", 
+        "email", 
+        "http", 
+        "asyncio", 
+        "backports" , 
+        "curses", 
+        "concurrent", 
+        "more_itertools", 
+        "multiprocessing", 
+        "mpl_toolkits",
+        "encodings",
+        "et_xmlfile",
+        "jaraco",
+        "markupsafe",
+        "packaging",
+        "platformdirs",
+        "sqlite3",
+        "xmlrpc",
+        ],
+    "packages" : [],
+    "optimize": 2,
+    "bin_excludes": ["tcl86t.dll", "tk86t.dll"],
+    "zip_include_packages": ["*"],
+    #"zip_exclude_packages": ["numpy", "pandas", "openpyxl", "pdfminer", "cryptography", "PIL",],
+    "zip_exclude_packages": [],
+}
 
 setup(name = 'BubblesToXLSX',
             version = '1.0',
             description = 'Bubbles to Excel',
-            options = {'build_exe': {'includes': includes, 'excludes': excludes, 'packages': packages, 'include_files': include_files}},
+            options = {'build_exe': options},
             executables = [Executable("main.py", base= None, target_name= "BubblesToXLSX.exe")])
